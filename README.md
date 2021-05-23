@@ -7,8 +7,8 @@ the annotated contigs of the assembled genomes.
 
 ## Pre-requirements
 
-> WGA-LP requires a system that can run `bash` scripts. To run the analysis on 
-  the Lactobacilli data, at least 10GB of available RAM are required.
+> WGA-LP requires a system that can run `bash` scripts. To analyse 
+  the Lactobacilli data, at least 10GB of available RAM is required.
 
 This pipeline relies on many external tools that must be installed in order to run the analysis:
 
@@ -27,7 +27,7 @@ This pipeline relies on many external tools that must be installed in order to r
 
 ## Coping with java tools
 
-Mauve and Bazam tools are implemented in `java` and are available in the form of `.jar` files. To let the pipeline
+**Mauve** and **Bazam** are implemented in `java` and are available in the form of `.jar` files. To let the pipeline
 know their location it is required that they are added to the execution path: 
 
 ### Manual approach
@@ -55,6 +55,11 @@ to simplify this process, you can use the `configure.sh` script in this way:
 
 ```
 bash configure.sh /path/to/newPathFolder /path/to/bazam.jar /path/to/Mauve.jar
+```
+add this line to your `.bashrc` if you don't want to repeat this process for each terminal session:
+
+```
+export PATH=$PATH:/path/to/newPathFolder
 ```
 
 ## Installation
