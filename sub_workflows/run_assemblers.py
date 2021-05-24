@@ -19,12 +19,13 @@ class RunAssemblers(Workflow):
         step = SPAdes("SPAdes_plasmid", root, fastq_fwd=fastq_fwd, fastq_rev=fastq_rev, plasmid=True)  
         out_dict["SPAdes_plasmid"] = step["contigs"]
         # minia
-        for kmer_size in [31,61,91,121]: 
-            try:
-                step = minia("minia_" + str(kmer_size), root, kmer_size, fastq_fwd, fastq_rev=fastq_rev)
-                out_dict["minia_" + str(kmer_size)] = step["contigs"]
-            except:
-                pass
+        
+        #for kmer_size in [31,61,91,121]: 
+        #    try:
+        #        step = minia("minia_" + str(kmer_size), root, kmer_size, fastq_fwd, fastq_rev=fastq_rev)
+        #        out_dict["minia_" + str(kmer_size)] = step["contigs"]
+        #    except:
+        #        pass
         
 
         return out_dict
