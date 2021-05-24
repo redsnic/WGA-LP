@@ -177,7 +177,7 @@ if __name__ == "__main__":
     if filtered_reads != trimmed_reads:
         kraken_input = {}
         kraken_input["input_fastq"] = filtered_reads
-        kraken_input["prefix"] = "before_cleanup_"
+        kraken_input["prefix"] = "after_cleanup_"
         kraken_input["kraken_db"] = karaken_db_on_disk_location
         KrakenBracken("after_cleanup_kraken", base_root).run(kraken_input)
 
