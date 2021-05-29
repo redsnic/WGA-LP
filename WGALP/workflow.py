@@ -13,7 +13,7 @@ class Workflow():
 
     def run(self, args_dict, force = False):
         self._load()
-        if (self.checkpoint.files is not None) or force:
+        if (self.checkpoint.files is not None) and not force:
             return self.checkpoint.files
         output = self.task(args_dict)
         self.checkpoint.set_content(output)
@@ -25,4 +25,10 @@ class Workflow():
     def _load(self):
         self.checkpoint = CheckPoint()
         self.checkpoint.load(self.root, self.name + ".checkpoint")
+
+    def delete_checkpoint(self):
+        # erase checkpoint file
+        self.checkpoint.delete()
+        
+
 
