@@ -30,7 +30,6 @@ def fastq_bam_difference(name, rootpath, fastq, bam, execution_mode = "on_demand
     return step
 
 
-# TODO controllare
 def fastq_bam_difference_runner(step, args):
     """
     given a fastq and a bam files,

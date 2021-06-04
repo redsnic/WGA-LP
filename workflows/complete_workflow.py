@@ -170,7 +170,6 @@ if __name__ == "__main__":
         except Exception as e:
             print("INFO: skipping decontamination for " + sample_identifiers[directory])
             filtered_reads[directory] = trimmed_reads[directory] 
-            raise
 
     # run kraken after filtering
 
@@ -210,7 +209,10 @@ if __name__ == "__main__":
                 reorder_annotate_args = {} 
                 reorder_annotate_args["contig"] = contig
                 reorder_annotate_args["reference"] = reference
-                outputs[tool] = ReorderAndAnnotate(tool + "_reorder_annotate", root).run(reorder_annotate_args)
+                if reference != None:
+                    outputs[tool] = ReorderAndAnnotate(tool + "_reorder_annotate", root).run(reorder_annotate_args)
+                else:
+                    outputs[tool] = None
         reorder_annotate_output[directory] = outputs
 
 
