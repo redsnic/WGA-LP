@@ -173,6 +173,8 @@ if __name__ == "__main__":
 
     # run kraken after filtering
 
+    raise Exception("STOPPING AFTER DECONTAMINATION")
+
     if filtered_reads != trimmed_reads:
         kraken_input = {}
         kraken_input["input_fastq"] = filtered_reads
