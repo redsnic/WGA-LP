@@ -56,7 +56,7 @@ def mauve_contig_sorting_runner(step, args):
     
     # check if there is a less "hard coded" approach
     # outfile = [f for f in os.listdir(os.path.join(step.outpath, outdir)) if re.match(r".*\.fasta$", f)][0]
-    outfile = os.path.splitext(os.path.basename(contig)) + ".fasta"
+    outfile = os.path.splitext(os.path.basename(contig))[0] + ".fasta"
 
     # organize output
 

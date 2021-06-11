@@ -3,21 +3,22 @@ import os
 from WGALP.utils.input_manager import InputManager
 from WGALP.utils.input_manager import check_files
 from WGALP.utils.input_manager import check_folders
-from sub_workflows.extract_plasmids import Recycler
+from sub_workflows.fastq_trimming import TrimFastq
+from WGALP.blocks.minia import minia
+from WGALP.blocks.SPAdes import SPAdes
 
 def prepare_input(args):
-    input_data = InputManager("Wrapper to easily run recycler and inferr plasmid from genome assembly graphs")
+    input_data = InputManager("Wrapper to easily run Whole Genome Assemblers")
     input_data.add_arg("--fastq-fwd", "path", description="raw forward reads (.fastq)")
-    input_data.add_arg("--fastq-rev", "path", description="raw reverse reads (.fastq)") 
-    input_data.add_arg("--contigs", "path", description="assembled contigs (.fastq)") 
-    input_data.add_arg("--assembly-graph", "path", description="assembly graph (.fastg)")
-    input_data.add_arg("--kmer", "text", description="maximum kmer length used by the assembler (127 for spades)")
-    input_data.add_arg("--output", "dir", description="output folder")
+    input_data.add_arg("--fastq-rev", "path", description="raw reverse reads (.fastq)")
+    input_data.add_arg("--output", "dir", description="path to the output folder")
+    input_data.add_arg("--assembler", "text", description="assembler name (from this list) [SPAdes, minia, SPAdes_plasmid]")
+    input_data.add_arg("--kmer", "text", description="kmer length (to be used only with minia)")
     input_data.parse(args)
     return input_data
 
-def sanity_check(output_dir, fastq_fwd, fastq_rev, contigs, assembly_graph, kmer_length):
-    check_files([fastq_fwd, fastq_rev, contigs, assembly_graph])
+def sanity_check(fastq_fwd, fastq_rev, output_dir, assembler, kmer):
+    check_files([fastq_fwd, fastq_rev])
     try:
         check_folders([output_dir])
     except Exception:
@@ -25,24 +26,31 @@ def sanity_check(output_dir, fastq_fwd, fastq_rev, contigs, assembly_graph, kmer
             raise Exception("--output argument must be a directory and not a file")
         else:
             os.mkdir(output_dir)
-    if not isinstance(kmer_length, int):
-        raise Exception("--kmer must be followed by an integer")
+    if assembler not in ["SPAdes", "minia", "SPAdes_plasmid"]:
+        raise Exception("--assembler option supports only SPAdes or minia")
+    if assembler == "minia":
+        if kmer == None:
+            raise Exception("minia requires --kmer option")
+    elif kmer != None:
+        raise Exception("--kmer option can be set only with minia assembler")
 
-def run_plasmid_extraction(output_dir, fastq_fwd, fastq_rev, contigs, assembly_graph, kmer_length=127):
+
+def run_assembler(fastq_fwd, fastq_rev, output_dir, assembler, kmer):
     # sanity check
-    kmer_length = int(kmer_length)
-    sanity_check(output_dir, fastq_fwd, fastq_rev, contigs, assembly_graph, kmer_length)
-    args_dict = {
-        "fastq_fwd" : fastq_fwd, 
-        "fastq_rev" : fastq_rev, 
-        "contigs" : contigs,
-        "assembly_graph" : assembly_graph,
-        "kmer_length" : kmer_length
-    }
-    step = Recycler("recycler", output_dir)
-    out = step.run(args_dict)
-    step.delete_checkpoint()
-    return(out)
+    sanity_check(fastq_fwd, fastq_rev, output_dir, assembler, kmer)
+    
+    if assembler == "SPAdes":
+        out = SPAdes("SPAdes", output_dir, fastq_fwd, fastq_rev)
+        return out
+    elif assembler == "SPAdes_plasmid":
+        out = SPAdes("SPAdes", output_dir, fastq_fwd, fastq_rev, plasmid=True)
+        return out
+    elif assembler=="minia":
+        out = minia("minia_" + str(kmer), output_dir, kmer, fastq_fwd, fastq_rev=fastq_rev) 
+        return out
+    else:
+        raise Exception("Invalid assembler")
+
      
 if __name__ == "__main__":
     
@@ -50,17 +58,20 @@ if __name__ == "__main__":
 
     fastq_fwd = in_manager["--fastq-fwd"]["value"]
     fastq_rev = in_manager["--fastq-rev"]["value"]
-    contigs = in_manager["--contigs"]["value"]
-    assembly_graph = in_manager["--assembly-graph"]["value"]
-    kmer_length = in_manager["--kmer"]["value"]
-    output_dir = in_manager["--output"]["value"] 
-
-    output = run_plasmid_extraction(output_dir, fastq_fwd, fastq_rev, contigs, assembly_graph, kmer_length)
+    output_dir = in_manager["--output"]["value"]
+    assembler = in_manager["--assembler"]["value"]
+    try:
+        kmer = int(in_manager["--kmer"]["value"])
+    except Exception:
+        kmer = None
+    
+    output = run_assembler(fastq_fwd, fastq_rev, output_dir, assembler, kmer)
 
     print("task completed successfully")
-    print("the fasta file with the inferred plasmids is at the following location:")
-    print("\t" + "plasmid_fasta" + " : " + output["plasmid_fasta"])
-
-    
-
-    
+    print("assembled contigs/scaffolds are at the following locations:")
+    if assembler == "SPAdes":
+        print("\t" + "contigs" + " : " + output["contigs"])
+        print("\t" + "scaffolds" + " : " + output["scaffolds"])
+    if assembler == "minia":
+        print("\t" + "contigs" + " : " + output["contigs"])
+    print("check " + output_dir + " for assembler specific files")
