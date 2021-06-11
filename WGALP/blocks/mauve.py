@@ -53,7 +53,10 @@ def mauve_contig_sorting_runner(step, args):
         outdir = "alignment" + str(max([ int(x[0][len(step.outpath)+1:].replace("alignment", "")) for x in list(os.walk(step.outpath))[1:] ]))
     else:
         outdir = "alignment" + str(max([ int(x[0][len(step.outpath):].replace("alignment", "")) for x in list(os.walk(step.outpath))[1:] ]))
-    outfile = [f for f in os.listdir(os.path.join(step.outpath, outdir)) if re.match(r".*\.fasta$", f)][0]
+    
+    # check if there is a less "hard coded" approach
+    # outfile = [f for f in os.listdir(os.path.join(step.outpath, outdir)) if re.match(r".*\.fasta$", f)][0]
+    outfile = os.path.splitext(os.path.basename(contig)) + ".fasta"
 
     # organize output
 

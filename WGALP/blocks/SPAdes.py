@@ -62,7 +62,8 @@ def SPAdes_runner(step, args):
 
     step.outputs = {
         "contigs" : "contigs.fasta",
-        "scaffolds" : "scaffolds.fasta"
+        "scaffolds" : "scaffolds.fasta",
+        "assembly_graph" : "assembly_graph.fastg"
     }
 
     return step

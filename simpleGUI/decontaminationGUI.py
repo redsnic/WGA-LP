@@ -2,8 +2,8 @@ import PySimpleGUI as sg
 import traceback
 import os
 import subprocess
-from workflows.decontamination_workflow import run_decontaminationPE
-from workflows.decontamination_workflow import run_decontamination
+from mini_programs.decontamination_workflow import run_decontaminationPE
+from mini_programs.decontamination_workflow import run_decontamination
 
 if __name__ == "__main__":
     # Very basic window.  Return values using auto numbered keys
