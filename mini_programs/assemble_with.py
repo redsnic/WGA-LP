@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     print("task completed successfully")
     print("assembled contigs/scaffolds are at the following locations:")
-    if assembler == "SPAdes":
+    if assembler == "SPAdes" or assembler == "SPAdes_plasmid":
         print("\t" + "contigs" + " : " + output["contigs"])
         print("\t" + "scaffolds" + " : " + output["scaffolds"])
     if assembler == "minia":
