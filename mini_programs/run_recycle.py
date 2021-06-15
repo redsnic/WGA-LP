@@ -9,7 +9,7 @@ def prepare_input(args):
     input_data = InputManager("Wrapper to easily run recycler and inferr plasmid from genome assembly graphs")
     input_data.add_arg("--fastq-fwd", "path", description="raw forward reads (.fastq)")
     input_data.add_arg("--fastq-rev", "path", description="raw reverse reads (.fastq)") 
-    input_data.add_arg("--contigs", "path", description="assembled contigs (.fastq)") 
+    input_data.add_arg("--contigs", "path", description="assembled contigs (.fasta)") 
     input_data.add_arg("--assembly-graph", "path", description="assembly graph (.fastg)")
     input_data.add_arg("--kmer", "text", description="maximum kmer length used by the assembler (127 for spades)")
     input_data.add_arg("--output", "dir", description="output folder")

@@ -6,10 +6,10 @@ from WGALP.utils.input_manager import check_folders
 from sub_workflows.compute_coverage import ComputeCoverage
 
 def prepare_input(args):
-    input_data = InputManager("Wrapper to easily run recycler and inferr plasmid from genome assembly graphs")
+    input_data = InputManager("Program to extract coverage statistics from a Whole Genome Assembly")
     input_data.add_arg("--fastq-fwd", "path", description="raw forward reads (.fastq)")
     input_data.add_arg("--fastq-rev", "path", description="raw reverse reads (.fastq)") 
-    input_data.add_arg("--contigs", "path", description="assembled contigs (.fastq)") 
+    input_data.add_arg("--contigs", "path", description="assembled contigs (.fasta)") 
     input_data.add_arg("--output", "dir", description="output folder")
     input_data.parse(args)
     return input_data

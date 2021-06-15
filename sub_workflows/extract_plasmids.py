@@ -27,7 +27,7 @@ class Recycler(Workflow):
         # FastQC initial  
         bwa_index("bwa_index_recycler", self.root, contigs)
         out_bwa = BWA("bwa_realign_contigs", self.root, contigs, fastq1=fastq_fwd, fastq2=fastq_rev)
-        out_vsi = samtools_VSI("vsi_realign_contigs", self.root, out_bwa["samfile"], index=False)
+        out_vsi = samtools_VSI("vsi_realign_contigs", self.root, out_bwa["samfile"], index=True)
         out_bwa.delete()
         out_recycler = recycler("recycler", self.root, out_vsi["bamfile"], assembly_graph, kmer_length)
         out_vsi.delete()
