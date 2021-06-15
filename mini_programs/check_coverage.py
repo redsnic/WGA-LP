@@ -24,6 +24,7 @@ def sanity_check(output_dir, fastq_fwd, fastq_rev, contigs):
         else:
             os.mkdir(output_dir)
 
+
 def run_coverage_computation(output_dir, fastq_fwd, fastq_rev, contigs):
     # sanity check
     sanity_check(output_dir, fastq_fwd, fastq_rev, contigs)
@@ -35,6 +36,7 @@ def run_coverage_computation(output_dir, fastq_fwd, fastq_rev, contigs):
     step = ComputeCoverage("compute_coverage", output_dir)
     out = step.run(args_dict)
     step.delete_checkpoint()
+
     return(out)
      
 if __name__ == "__main__":
@@ -51,6 +53,7 @@ if __name__ == "__main__":
     print("task completed successfully")
     print("the file with the read depth for each base of the assembled genome is available at this location:")
     print("\t" + "depth_file" + " : " + output["depth_file"])
+    print("\t" + "depth_summary" + " : " + output["depth_summary"])
 
     
 

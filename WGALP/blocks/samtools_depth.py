@@ -1,5 +1,6 @@
 # --- default imports ---
 import os
+import pandas as pd
 
 # --- load utils ---
 from WGALP.utils.commandLauncher import run_sp
@@ -26,6 +27,11 @@ def samtools_depth(name, rootpath, bamfile, execution_mode = "on_demand"):
     step.set_description(description, input_description, output_description)
     return step
 
+def summarise_depth(depth_file, out_file):
+    df = pd.read_csv(depth_file, sep='\t', names=["Name", "Position", "NReads"])
+    df = df.groupby(["Name"])["NReads"].agg(Length="count",Coverage="mean",Sd="std").reset_index()
+    df.to_csv(out_file, sep="\t")
+
 def samtools_depth_runner(step, args):
     """
     run samtools depth
@@ -44,9 +50,12 @@ def samtools_depth_runner(step, args):
 
     if step.execution_mode != "read":
         run_sp(step, command)
+        summarise_depth(os.path.join(step.outpath, out_filename), os.path.join(step.outpath, out_filename + ".summary"))
+
 
     step.outputs = {
-        "depth_file" : out_filename
+        "depth_file" : out_filename,
+        "depth_summary" : out_filename + ".summary"
     }
 
     return step 
