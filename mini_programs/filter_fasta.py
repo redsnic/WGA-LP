@@ -36,9 +36,11 @@ def filter_fasta( fasta_file_path, selected_contigs, out_file_name):
         if line.startswith(">"):
             # check if read ID is in the bad list
             contig_id = line.split()[0][1:].strip()
-            print(contig_id)
-            if(binary_search(selected_contigs, contig_id)):
+            
+            #if(binary_search(selected_contigs, contig_id)):
+            if contig_id in selected_contigs:
                 to_be_printed = True
+                print(contig_id)
             else:
                 to_be_printed = False
         if(to_be_printed):
