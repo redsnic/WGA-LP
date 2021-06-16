@@ -1,11 +1,4 @@
-from bisect import bisect_left
-
-def binary_search(a, x):
-    i = bisect_left(a, x)
-    if i != len(a) and a[i] == x:
-        return i
-    else:
-        return None
+from WGALP.utils.genericUtils import binary_search
 
 def filter_fastq_reads( fastq_file_path, bad_reads_list_path, out_file_name):
     """
@@ -32,7 +25,7 @@ def filter_fastq_reads( fastq_file_path, bad_reads_list_path, out_file_name):
         if(line_count == 0):
             # check if read ID is in the bad list
             read_id = line.split()[0][1:]
-            if(binary_search(bad_reads, read_id)):
+            if(binary_search(bad_reads, read_id) is not None):
                 to_be_printed = False
             else:
                 to_be_printed = True

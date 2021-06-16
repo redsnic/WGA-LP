@@ -1,16 +1,10 @@
-from bisect import bisect_left
 import sys
 import os
 from WGALP.utils.input_manager import InputManager
 from WGALP.utils.input_manager import check_files
 from WGALP.utils.input_manager import check_folders
+from WGALP.utils.genericUtils import binary_search
 
-def binary_search(a, x):
-    i = bisect_left(a, x)
-    if i != len(a) and a[i] == x:
-        return i
-    else:
-        return None
 
 def filter_fasta( fasta_file_path, selected_contigs, out_file_name):
     """
@@ -37,8 +31,7 @@ def filter_fasta( fasta_file_path, selected_contigs, out_file_name):
             # check if read ID is in the bad list
             contig_id = line.split()[0][1:].strip()
             
-            #if(binary_search(selected_contigs, contig_id)):
-            if contig_id in selected_contigs:
+            if(binary_search(selected_contigs, contig_id) is not None):
                 to_be_printed = True
                 print(contig_id)
             else:

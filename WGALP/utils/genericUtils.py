@@ -1,6 +1,9 @@
 # this files contains fuctions useful to simplify some common activities in the creation
 # of the blocks of the pipelines
 
+import os
+from bisect import bisect_left
+
 def default(dict_, key, default_, index=None):
     """
     Given a dictionary (dict_) and a key (key),
@@ -31,7 +34,7 @@ def add_tag(tag, filename):
     return filename[:pos] + "." + tag + filename[pos:]
 
 
-import os
+
 def get_files_recursively(directory):
     files = []
     for base_path, _, sub_files in os.walk(directory):
@@ -48,4 +51,15 @@ def merge_two_dicts(x, y):
     for key, value in y.items():
         x[key] = value
     return x
+
+def binary_search(a, x):
+    """
+    a: sorted db
+    x: element
+    """
+    i = bisect_left(a, x)
+    if i != len(a) and a[i] == x:
+        return i
+    else:
+        return None
 
