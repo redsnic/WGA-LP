@@ -5,12 +5,24 @@ def is_flag(arg):
     return arg.startswith("-")
 
 def check_files(file_list):
+    """
+    Procedure that checks if each folder of a list is valid (exists and was given as output)
+    :param file_list list of file paths to be verified for existance:
+    """
     for f in file_list:
+        if f is None:
+            raise Exception("Missing a required argument, use --help for more information")
         if not os.path.isfile(f):
             raise FileNotFoundError("File not found: " + f)
 
 def check_folders(folder_list):
+    """
+    Procedure that checks if each folder of a list is valid (exists and was given as output)
+    :param file_list list of folder paths to be verified for existance:
+    """
     for f in folder_list:
+        if f is None:
+            raise Exception("Missing a required argument, use --help for more information")
         if not os.path.isdir(f):
             raise FileNotFoundError("Directory not found: " + f)
 
@@ -27,10 +39,12 @@ class InputManager():
             print("--- no arguments given, printing help message ---")
             print(self.help())
             sys.exit(2) 
+
         while i < len(args):
             if args[i] == "--help":
                 print(self.help())
                 sys.exit(2)
+
             if is_flag(args[i]):
                 try:
                     flag = self.flags[args[i]]
@@ -63,12 +77,12 @@ class InputManager():
                     elif flag["type"] == "text":
                         flag["value"] = args[i+1]
                         i = i + 2
-                        
-                    
+            
                 except KeyError:
                     print("ERROR: unknown flag " + args[i])
                     print(self.help())
                     raise
+                
 
 
     def add_arg(self, name, type_, description = ""):

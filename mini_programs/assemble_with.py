@@ -18,6 +18,10 @@ def prepare_input(args):
     return input_data
 
 def sanity_check(fastq_fwd, fastq_rev, output_dir, assembler, kmer):
+    """
+    check input correctnes for this script.
+    Argument should be the same of the main function
+    """
     check_files([fastq_fwd, fastq_rev])
     try:
         check_folders([output_dir])
@@ -36,6 +40,14 @@ def sanity_check(fastq_fwd, fastq_rev, output_dir, assembler, kmer):
 
 
 def run_assembler(fastq_fwd, fastq_rev, output_dir, assembler, kmer):
+    """
+    Run an assembler on a paired end fastq pair. 
+    :param fastq_fwd: preprocessed forward reads (.fastq)
+    :param fastq_rev: preprocessed reverse reads (.fastq)
+    :param output_dir: path to the output folder
+    :param assembler: assembler name (from this list) [SPAdes, minia, SPAdes_plasmid]
+    :param kmer: kmer length (to be used only with minia)
+    """
     # sanity check
     sanity_check(fastq_fwd, fastq_rev, output_dir, assembler, kmer)
     
