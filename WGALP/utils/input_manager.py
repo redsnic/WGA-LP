@@ -77,12 +77,12 @@ class InputManager():
                     elif flag["type"] == "text":
                         flag["value"] = args[i+1]
                         i = i + 2
-            
                 except KeyError:
                     print("ERROR: unknown flag " + args[i])
                     print(self.help())
                     raise
-                
+            else: 
+                raise Exception("ERROR: I don't know how to handle this: " + args[i] + "\nHave you forgotten an argument?")
 
 
     def add_arg(self, name, type_, description = ""):

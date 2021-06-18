@@ -13,7 +13,7 @@ input_description = """
 a fasta file of the WGA
 """
 output_description = """
-None (check output folder for reports)
+A log file
 """
 
 ### Wrapper
@@ -44,8 +44,6 @@ def checkM_lineage_runner(step, args):
     """
     f1 = args["fasta_file"]
 
-    basenamef1 = os.path.basename(f1)
-
     n_threads = multiprocessing.cpu_count()
     if "n_threads" in args:
         n_threads = args["n_threads"]
@@ -69,7 +67,7 @@ def checkM_lineage_runner(step, args):
     # organize output
 
     step.outputs = {
-        "report_table" : "report_table.txt"
+        "checkm_report_table" : "report_table.txt"
     }    
 
     return step
