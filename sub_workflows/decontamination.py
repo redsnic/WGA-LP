@@ -97,17 +97,16 @@ def decontaminationPE(rootpath, references, contaminants, fastq_fwd, fastq_rev):
         extract_good_reads = samtools_VSI("bad_reads" + suf, rootpath, remap_to_reference["samfile"], view_flags="-F 4", index=False)
         filter_bad_reads_fwd = fastq_bam_difference("remove_good_reads_fwd" + suf, rootpath, pb_fastq_1, extract_good_reads["bamfile"])
         filter_bad_reads_rev = fastq_bam_difference("remove_good_reads_rev" + suf, rootpath, pb_fastq_2, extract_good_reads["bamfile"])
-        # put results in rootpath
-        os.rename(filter_bad_reads_fwd["filtered_fastq"], os.path.join(rootpath, "bad_"+os.path.basename(fastq_fwd)))
-        os.rename(filter_bad_reads_rev["filtered_fastq"], os.path.join(rootpath, "bad_"+os.path.basename(fastq_rev)))
+        # put results in rootpath and update links
+        pb_fastq_1 = os.path.join(rootpath, "bad_"+os.path.basename(fastq_fwd))
+        pb_fastq_2 = os.path.join(rootpath, "bad_"+os.path.basename(fastq_rev))
+        os.rename(filter_bad_reads_fwd["filtered_fastq"], pb_fastq_1)
+        os.rename(filter_bad_reads_rev["filtered_fastq"], pb_fastq_2)
         # cleanup
         remap_to_reference.delete()
         extract_good_reads.delete()
         filter_bad_reads_fwd.delete()
         filter_bad_reads_rev.delete()
-        # update
-        pb_fastq_1 = os.path.join(rootpath, os.path.basename(fastq_fwd))
-        pb_fastq_2 = os.path.join(rootpath, os.path.basename(fastq_rev))
 
     # final cleanup
     out_fastq_fwd = os.path.join(rootpath, "decontaminated_fwd.fastq")
