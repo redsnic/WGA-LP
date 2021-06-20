@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import os
 from WGALP.utils.input_manager import InputManager

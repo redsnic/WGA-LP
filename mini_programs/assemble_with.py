@@ -1,9 +1,10 @@
+#!/usr/bin/env python3
+
 import sys
 import os
 from WGALP.utils.input_manager import InputManager
 from WGALP.utils.input_manager import check_files
 from WGALP.utils.input_manager import check_folders
-from sub_workflows.fastq_trimming import TrimFastq
 from WGALP.blocks.minia import minia
 from WGALP.blocks.SPAdes import SPAdes
 

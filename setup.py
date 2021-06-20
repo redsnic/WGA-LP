@@ -6,6 +6,6 @@ setuptools.setup(
    description='A simple tool to create bash pipeline in python for WGA and other applications',
    author='Nicolò Rossi',
    author_email='olocin.issor@gmail.com',
-   install_requires=['wheel'],
+   install_requires=['wheel', 'pandas'],
    packages=setuptools.find_packages()
 )
