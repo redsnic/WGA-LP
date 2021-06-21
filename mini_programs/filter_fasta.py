@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# --- imports
+
 import sys
 import os
 from WGALP.utils.input_manager import InputManager
@@ -7,6 +9,29 @@ from WGALP.utils.input_manager import check_files
 from WGALP.utils.input_manager import check_folders
 from WGALP.utils.genericUtils import binary_search
 
+# --- input arguments
+
+def prepare_input(args):
+    input_data = InputManager("Select only listed contigs from a Whole Genom Assembly")
+    input_data.add_arg("--contigs", "path", description="assembled contigs or scaffolds (.fasta)")
+    input_data.add_arg("--selected-contigs", "path", description="a file containing the ids of the selected contigs (each id is in its own line)")
+    input_data.add_arg("--output", "dir", description="path to the output folder") 
+    input_data.parse(args)
+    return input_data
+
+# --- input sanity checks
+
+def sanity_check(output_dir, contigs, selected_contigs):
+    check_files([contigs, selected_contigs])
+    try:
+        check_folders([output_dir])
+    except Exception:
+        if os.path.isfile(output_dir):
+            raise Exception("--output argument must be a directory and not a file")
+        else:
+            os.mkdir(output_dir)
+
+# --- core functions
 
 def filter_fasta( fasta_file_path, selected_contigs, out_file_name):
     """
@@ -47,46 +72,32 @@ def filter_fasta( fasta_file_path, selected_contigs, out_file_name):
     out_file.close()
 
     return out_file_name
-        
 
-def prepare_input(args):
-    input_data = InputManager("Select only listed contigs from a Whole Genom Assembly")
-    input_data.add_arg("--contigs", "path", description="assembled contigs or scaffolds (.fasta)")
-    input_data.add_arg("--selected-contigs", "path", description="a file containing the ids of the selected contigs (each id is in its own line)")
-    input_data.add_arg("--output", "dir", description="path to the output folder") 
-    input_data.parse(args)
-    return input_data
-
-def sanity_check(output_dir, contigs, selected_contigs):
-    check_files([contigs, selected_contigs])
-    try:
-        check_folders([output_dir])
-    except Exception:
-        if os.path.isfile(output_dir):
-            raise Exception("--output argument must be a directory and not a file")
-        else:
-            os.mkdir(output_dir)
-
-
-def reorder_contigs(output_dir, contigs, selected_contigs):
+def select_contigs_aux(output_dir, contigs, selected_contigs):
     # sanity check
     sanity_check(output_dir, contigs, selected_contigs)
     out = filter_fasta(contigs, selected_contigs, os.path.join(output_dir, "filtered_contigs.fasta") )
-    return(out)
+    return out
      
-if __name__ == "__main__":
-    
-    in_manager = prepare_input(sys.argv[1:])
+# --- caller function
+
+def select_contigs(args):
+    in_manager = prepare_input(args)
 
     contigs = in_manager["--contigs"]["value"]
     selected_contigs = in_manager["--selected-contigs"]["value"]
     output_dir = in_manager["--output"]["value"]
     
-    output = reorder_contigs(output_dir, contigs, selected_contigs)
+    output = select_contigs_aux(output_dir, contigs, selected_contigs)
 
     print("task completed successfully")
     print("filtered .fasta is at the followinf location:")
     print("\t" + "filtered_fasta" + " : " + output)
+    return output
+
+if __name__ == "__main__":
+    select_contigs(sys.argv[1:])
+    
     
 
 

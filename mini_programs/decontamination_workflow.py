@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# --- imports
+
 import sys
 import os
 from WGALP.utils.input_manager import InputManager
@@ -7,9 +9,10 @@ from sub_workflows.decontamination import Decontamination
 from WGALP.utils.input_manager import check_files
 from WGALP.utils.input_manager import check_folders
 
+# --- input arguments
 
 def prepare_input(args):
-    input_data = InputManager(program_description="Remove reads that map to a contaminant reference, but not to a target reference" + "\n" + "references must be in .fasta format and BWA indexed (command: bwa index path/to/file.fasta)")
+    input_data = InputManager(program_description="Remove reads that map to a contaminant reference, but not to any target reference" + "\n" + "references must be in .fasta format and BWA indexed (command: bwa index path/to/file.fasta)")
     input_data.add_arg("--fastq", "path", description="single raw read file to be cleaned (.fastq) [use only with NON paired end data]")
     input_data.add_arg("--fastq-fwd", "path", description="forward raw reads (.fastq) [use only with paired end data]")
     input_data.add_arg("--fastq-rev", "path", description="revese raw reads (.fastq) [use only with paired end data]")
@@ -18,6 +21,33 @@ def prepare_input(args):
     input_data.add_arg("--output", "dir", description="the folder in which the output will be saved")
     input_data.parse(args)
     return input_data
+
+
+# --- input sanity checks
+
+def sanity_check(fastq, fastq_fwd, fastq_rev, references, contaminants, output_dir):
+    # mode check
+    if fastq is not None and (fastq_fwd is not None and fastq_rev is not None):
+        raise Exception("Choose either PE [--fastq-rev and --fastq-fwd] or non PE [--fastq] mode, use --help for more information")
+
+    if fastq is None and not (fastq_fwd is not None and fastq_rev is not None):
+        raise Exception("For PE mode both fwd and rev fastq files must be specified, use --help for more information")
+
+    # files/dirs check
+    check_files(references + contaminants)
+    if fastq is None:
+        check_files([fastq_fwd, fastq_rev])
+    else:
+        check_files([fastq])
+    try:
+        check_folders([output_dir])
+    except Exception:
+        if os.path.isfile(output_dir):
+            raise Exception("--output argument must be a directory and not a file")
+        else:
+            os.mkdir(output_dir)
+
+# --- core functions
 
 def run_decontamination(fastq, references, contaminants, output_dir):
     # sanity check
@@ -57,9 +87,11 @@ def run_decontaminationPE(fastq_fwd, fastq_rev, references, contaminants, output
     dec.delete_checkpoint()
     return out
 
-if __name__ == "__main__":
-    
-    in_manager = prepare_input(sys.argv[1:])
+# --- caller function
+
+def decontamination_workflow(args):
+
+    in_manager = prepare_input(args)
 
     fastq = in_manager["--fastq"]["value"]
     fastq_fwd = in_manager["--fastq-fwd"]["value"]
@@ -67,14 +99,9 @@ if __name__ == "__main__":
     references = in_manager["--references"]["value"]
     contaminants = in_manager["--contaminants"]["value"]
     output_dir = in_manager["--output"]["value"]
-
-    if fastq is not None and (fastq_fwd is not None and fastq_rev is not None):
-        raise Exception("Choose either PE [--fastq-rev and --fastq-fwd] or non PE [--fastq] mode, use --help for more information")
-
-    if fastq is None and not (fastq_fwd is not None and fastq_rev is not None):
-        raise Exception("For PE mode both fwd and rev fastq files must be specified, use --help for more information")
     
-    
+    sanity_check(fastq, fastq_fwd, fastq_rev, references, contaminants, output_dir)
+
     if fastq is None:
         output = run_decontaminationPE(fastq_fwd, fastq_rev, references, contaminants, output_dir)
         print("task completed successfully")
@@ -86,5 +113,12 @@ if __name__ == "__main__":
         print("task completed successfully")
         print("decontaminated reads are at the following locations:")
         print("\t" + "cleaned_fastq" + " : " + output["cleaned_fastq"])
+
+    return output
+
+
+if __name__ == "__main__":
+    decontamination_workflow(sys.argv[1:])    
+
 
     

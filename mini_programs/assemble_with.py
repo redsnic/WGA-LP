@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# --- imports
+
 import sys
 import os
 from WGALP.utils.input_manager import InputManager
@@ -7,6 +9,8 @@ from WGALP.utils.input_manager import check_files
 from WGALP.utils.input_manager import check_folders
 from WGALP.blocks.minia import minia
 from WGALP.blocks.SPAdes import SPAdes
+
+# --- input arguments
 
 def prepare_input(args):
     input_data = InputManager("Wrapper to easily run Whole Genome Assemblers")
@@ -17,6 +21,8 @@ def prepare_input(args):
     input_data.add_arg("--kmer", "text", description="kmer length (to be used only with minia)")
     input_data.parse(args)
     return input_data
+
+# --- input sanity checks
 
 def sanity_check(fastq_fwd, fastq_rev, output_dir, assembler, kmer):
     """
@@ -39,6 +45,7 @@ def sanity_check(fastq_fwd, fastq_rev, output_dir, assembler, kmer):
     elif kmer != None:
         raise Exception("--kmer option can be set only with minia assembler")
 
+# --- core function
 
 def run_assembler(fastq_fwd, fastq_rev, output_dir, assembler, kmer):
     """
@@ -64,10 +71,10 @@ def run_assembler(fastq_fwd, fastq_rev, output_dir, assembler, kmer):
     else:
         raise Exception("Invalid assembler")
 
-     
-if __name__ == "__main__":
-    
-    in_manager = prepare_input(sys.argv[1:])
+# --- caller function
+
+def assemble_with(args):
+    in_manager = prepare_input(args)
 
     fastq_fwd = in_manager["--fastq-fwd"]["value"]
     fastq_rev = in_manager["--fastq-rev"]["value"]
@@ -88,3 +95,9 @@ if __name__ == "__main__":
     if assembler == "minia":
         print("\t" + "contigs" + " : " + output["contigs"])
     print("check " + output_dir + " for assembler specific files")
+
+    return output
+    
+if __name__ == "__main__":
+    assemble_with(sys.argv[1:])
+    

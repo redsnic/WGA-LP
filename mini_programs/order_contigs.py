@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
+# --- imports
+
 import sys
 import os
 from WGALP.utils.input_manager import InputManager
 from WGALP.utils.input_manager import check_files
 from WGALP.utils.input_manager import check_folders
 from WGALP.blocks.mauve import mauve_contig_sorting
+
+# --- input arguments
 
 def prepare_input(args):
     input_data = InputManager("Reorder contigs using mauve and a reference genome")
@@ -14,6 +18,8 @@ def prepare_input(args):
     input_data.add_arg("--output", "dir", description="path to the output folder") 
     input_data.parse(args)
     return input_data
+
+# --- input sanity checks
 
 def sanity_check(output_dir, reference, contigs):
     check_files([contigs, reference])
@@ -25,16 +31,18 @@ def sanity_check(output_dir, reference, contigs):
         else:
             os.mkdir(output_dir)
 
+# --- core functions
 
 def reorder_contigs(output_dir, reference, contigs):
     # sanity check
     sanity_check(output_dir, reference, contigs)
     out = mauve_contig_sorting("mauve_reorder", output_dir, reference, contigs)
     return(out)
-     
-if __name__ == "__main__":
-    
-    in_manager = prepare_input(sys.argv[1:])
+
+# --- caller function
+
+def order_contigs(args):
+    in_manager = prepare_input(args)
 
     contigs = in_manager["--contigs"]["value"]
     reference = in_manager["--reference"]["value"]
@@ -46,4 +54,10 @@ if __name__ == "__main__":
     print("the reordered assembly is at the following location:")
     print("\t" + "contigs" + " : " + output["contigs"])
     print("other formats are available in the output folder " + output_dir)
+
+    return output
+
+if __name__ == "__main__":
+    order_contigs(sys.argv[1:])
+    
     

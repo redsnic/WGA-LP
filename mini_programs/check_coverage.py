@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
+# --- imports
+
 import sys
 import os
 from WGALP.utils.input_manager import InputManager
 from WGALP.utils.input_manager import check_files
 from WGALP.utils.input_manager import check_folders
 from sub_workflows.compute_coverage import ComputeCoverage
+
+# --- input arguments
 
 def prepare_input(args):
     input_data = InputManager("Program to extract coverage statistics from a Whole Genome Assembly")
@@ -15,6 +19,8 @@ def prepare_input(args):
     input_data.add_arg("--output", "dir", description="output folder")
     input_data.parse(args)
     return input_data
+
+# --- input sanity checks
 
 def sanity_check(output_dir, fastq_fwd, fastq_rev, contigs):
     check_files([fastq_fwd, fastq_rev, contigs])
@@ -26,6 +32,7 @@ def sanity_check(output_dir, fastq_fwd, fastq_rev, contigs):
         else:
             os.mkdir(output_dir)
 
+# --- core function
 
 def run_coverage_computation(output_dir, fastq_fwd, fastq_rev, contigs):
     # sanity check
@@ -39,11 +46,13 @@ def run_coverage_computation(output_dir, fastq_fwd, fastq_rev, contigs):
     out = step.run(args_dict)
     step.delete_checkpoint()
 
-    return(out)
-     
-if __name__ == "__main__":
-    
-    in_manager = prepare_input(sys.argv[1:])
+    return out
+
+# --- caller function
+
+def check_coverage(args):
+
+    in_manager = prepare_input(args)
 
     fastq_fwd = in_manager["--fastq-fwd"]["value"]
     fastq_rev = in_manager["--fastq-rev"]["value"]
@@ -56,6 +65,13 @@ if __name__ == "__main__":
     print("the file with the read depth for each base of the assembled genome is available at this location:")
     print("\t" + "depth_file" + " : " + output["depth_file"])
     print("\t" + "depth_summary" + " : " + output["depth_summary"])
+
+    return output
+     
+if __name__ == "__main__":
+    check_coverage(sys.argv[1:])
+    
+    
 
     
 

@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# --- imports
+
 import sys
 import os
 from WGALP.utils.input_manager import InputManager
@@ -8,6 +10,8 @@ from WGALP.utils.input_manager import check_folders
 from sub_workflows.fastq_trimming import TrimFastq
 from WGALP.blocks.kraken import kraken
 from WGALP.blocks.bracken import bracken
+
+# --- input arguments 
 
 def prepare_input(args):
     input_data = InputManager("Run quality evaluation of raw reads, prepare trimmed reads and assess contaminations")
@@ -20,6 +24,8 @@ def prepare_input(args):
     input_data.parse(args)
     return input_data
 
+# --- input sanity checks
+
 def sanity_check(fastq_fwd, fastq_rev, output_dir):
     check_files([fastq_fwd, fastq_rev])
     try:
@@ -29,6 +35,8 @@ def sanity_check(fastq_fwd, fastq_rev, output_dir):
             raise Exception("--output argument must be a directory and not a file")
         else:
             os.mkdir(output_dir)
+
+# --- core function
 
 def run_quality_evaluation(fastq_fwd, fastq_rev, output_dir, kraken_db, memory_mapped, just_kraken):
     # sanity check
@@ -45,18 +53,16 @@ def run_quality_evaluation(fastq_fwd, fastq_rev, output_dir, kraken_db, memory_m
 
         kraken_out = kraken("kraken", output_dir, kraken_db, memory_mapped, fastq1=trimmed_reads["trimmed_fwd"], fastq2=trimmed_reads["trimmed_rev"])
         bracken("bracken", output_dir, kraken_out["kraken_report"], kraken_db) 
-
         return trimmed_reads
     else:
         kraken_out = kraken("kraken_direct", output_dir, kraken_db, memory_mapped, fastq1=fastq_fwd, fastq2=fastq_rev)
         bracken("bracken_direct", output_dir, kraken_out["kraken_report"], kraken_db) 
-
-        return None
+        return {}
      
+# --- caller function
 
-if __name__ == "__main__":
-    
-    in_manager = prepare_input(sys.argv[1:])
+def evaluate_quality(args):
+    in_manager = prepare_input(args)
 
     fastq_fwd = in_manager["--fastq-fwd"]["value"]
     fastq_rev = in_manager["--fastq-rev"]["value"]
@@ -73,3 +79,8 @@ if __name__ == "__main__":
         print("\t" + "trimmed_fwd" + " : " + output["trimmed_fwd"])
         print("\t" + "trimmed_rev" + " : " + output["trimmed_rev"])
     print("check " + output_dir + " for kraken and bracken outputs")
+
+    return output
+
+if __name__ == "__main__":
+    evaluate_quality(sys.argv[1:])

@@ -16,6 +16,8 @@ def smd5(s):
 def decontamination(rootpath, references, contaminants, fastq):
 
     bad_reads_sets = []
+    # garbage collection stores possibly bad fastq steps to allow further cleanup
+    garbage_collection = []
     for contaminant in contaminants:
         # create bad read sets
         suf = "_" + smd5(contaminant)
@@ -23,6 +25,7 @@ def decontamination(rootpath, references, contaminants, fastq):
         extract_possibly_bad_reads = samtools_VSI("possibly_bad_reads" + suf, rootpath, align_to_contaminant["samfile"], view_flags="-F 4")
         return_to_fastq = bazam("bazam_possibly_bad_reads" + suf, rootpath, extract_possibly_bad_reads["bamfile"])
         bad_reads_sets.append(return_to_fastq["fastqfile"])
+        garbage_collection.append(return_to_fastq)
 
         # cleanup
         align_to_contaminant.delete()
@@ -32,6 +35,10 @@ def decontamination(rootpath, references, contaminants, fastq):
     # merge the bad sets
     merged_possibly_bad_reads = os.path.join(rootpath, "possibly_bad_ids.txt")
     make_read_set(bad_reads_sets, merged_possibly_bad_reads)
+
+    # clean possibly bad fastqs
+    for rtfq in garbage_collection:
+        rtfq.delete()
 
     pb_fastq = os.path.join(rootpath, "possibly_bad.fastq")
 
@@ -44,7 +51,7 @@ def decontamination(rootpath, references, contaminants, fastq):
         extract_good_reads = samtools_VSI("bad_reads" + suf, rootpath, remap_to_reference["samfile"], view_flags="-F 4", index=False)
         filter_bad_reads = fastq_bam_difference("remove_good_reads_fwd" + suf, rootpath, pb_fastq, extract_good_reads["bamfile"])
         # put results in rootpath
-        os.rename(filter_bad_reads["filtered_fastq"], os.path.join(rootpath, "bad_"+os.path.basename(fastq)))
+        os.rename(filter_bad_reads["filtered_fastq"], os.path.join(rootpath, "discarded_reads.fastq"))
         # cleanup
         remap_to_reference.delete()
         extract_good_reads.delete()
@@ -52,11 +59,15 @@ def decontamination(rootpath, references, contaminants, fastq):
         # update
         pb_fastq = os.path.join(rootpath, os.path.basename(fastq))
 
-    # final cleanup
+    # final read filtering
     out_fastq = os.path.join(rootpath, "decontaminated.fastq")
     read_set_bad = os.path.join(rootpath, "bad.txt")
     make_read_set([pb_fastq], read_set_bad)
     filter_fastq_reads(fastq, read_set_bad, out_fastq)
+    # further cleanup
+    os.remove(os.path.join(rootpath, "possibly_bad.fastq"))
+    os.remove(os.path.join(rootpath, "bad.txt"))
+    os.remove(os.path.join(rootpath, "possibly_bad_ids.txt"))
 
     return { "cleaned_fastq" : out_fastq }
 
@@ -67,6 +78,8 @@ def decontaminationPE(rootpath, references, contaminants, fastq_fwd, fastq_rev):
     """
 
     bad_reads_sets = []
+    # garbage collection stores possibly bad fastq steps to allow further cleanup
+    garbage_collection = []
     for contaminant in contaminants:
         # create bad read sets
         suf = "_" + smd5(contaminant)
@@ -74,6 +87,7 @@ def decontaminationPE(rootpath, references, contaminants, fastq_fwd, fastq_rev):
         extract_possibly_bad_reads = samtools_VSI("possibly_bad_reads" + suf, rootpath, align_to_contaminant["samfile"], view_flags="-F 4")
         return_to_fastq = bazam("bazam_possibly_bad_reads" + suf, rootpath, extract_possibly_bad_reads["bamfile"])
         bad_reads_sets.append(return_to_fastq["fastqfile"])
+        garbage_collection.append(return_to_fastq)
 
         # cleanup
         align_to_contaminant.delete()
@@ -83,6 +97,10 @@ def decontaminationPE(rootpath, references, contaminants, fastq_fwd, fastq_rev):
     # merge the bad sets
     merged_possibly_bad_reads = os.path.join(rootpath, "possibly_bad_ids.txt")
     make_read_set(bad_reads_sets, merged_possibly_bad_reads)
+
+    # clean possibly bad fastqs
+    for rtfq in garbage_collection:
+        rtfq.delete()
 
     pb_fastq_1 = os.path.join(rootpath, "possibly_bad_fwd.fastq")
     pb_fastq_2 = os.path.join(rootpath, "possibly_bad_rev.fastq")
@@ -98,8 +116,8 @@ def decontaminationPE(rootpath, references, contaminants, fastq_fwd, fastq_rev):
         filter_bad_reads_fwd = fastq_bam_difference("remove_good_reads_fwd" + suf, rootpath, pb_fastq_1, extract_good_reads["bamfile"])
         filter_bad_reads_rev = fastq_bam_difference("remove_good_reads_rev" + suf, rootpath, pb_fastq_2, extract_good_reads["bamfile"])
         # put results in rootpath and update links
-        pb_fastq_1 = os.path.join(rootpath, "bad_"+os.path.basename(fastq_fwd))
-        pb_fastq_2 = os.path.join(rootpath, "bad_"+os.path.basename(fastq_rev))
+        pb_fastq_1 = os.path.join(rootpath, "discarded_reads_fwd.fastq")
+        pb_fastq_2 = os.path.join(rootpath, "discarded_reads_rev.fastq")
         os.rename(filter_bad_reads_fwd["filtered_fastq"], pb_fastq_1)
         os.rename(filter_bad_reads_rev["filtered_fastq"], pb_fastq_2)
         # cleanup
@@ -108,7 +126,7 @@ def decontaminationPE(rootpath, references, contaminants, fastq_fwd, fastq_rev):
         filter_bad_reads_fwd.delete()
         filter_bad_reads_rev.delete()
 
-    # final cleanup
+    # final read filtering
     out_fastq_fwd = os.path.join(rootpath, "decontaminated_fwd.fastq")
     out_fastq_rev = os.path.join(rootpath, "decontaminated_rev.fastq")
     read_set_bad_fwd = os.path.join(rootpath, "bad_fwd.txt")
@@ -117,6 +135,12 @@ def decontaminationPE(rootpath, references, contaminants, fastq_fwd, fastq_rev):
     make_read_set([pb_fastq_2], read_set_bad_rev)
     filter_fastq_reads(fastq_fwd, read_set_bad_fwd, out_fastq_fwd)
     filter_fastq_reads(fastq_rev, read_set_bad_rev, out_fastq_rev)
+    # further cleanup
+    os.remove(os.path.join(rootpath, "possibly_bad_fwd.fastq"))
+    os.remove(os.path.join(rootpath, "possibly_bad_rev.fastq"))
+    os.remove(os.path.join(rootpath, "possibly_bad_ids.txt"))
+    os.remove(os.path.join(rootpath, "bad_fwd.txt"))
+    os.remove(os.path.join(rootpath, "bad_rev.txt"))
 
     return { "cleaned_fastq_fwd" : out_fastq_fwd, "cleaned_fastq_rev" : out_fastq_rev }
 

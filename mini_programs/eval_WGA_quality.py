@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# --- imports
+
 import sys
 import os
 from WGALP.utils.input_manager import InputManager
@@ -9,6 +11,8 @@ from WGALP.blocks.checkM import checkM_lineage
 from WGALP.blocks.quast import quast
 from WGALP.blocks.merqury import merqury
 from WGALP.utils.genericUtils import merge_two_dicts
+
+# --- input arguments
 
 def prepare_input(args):
     input_data = InputManager("Run tools to evaluate WGA quality (CheckM ... TODO)")
@@ -21,6 +25,8 @@ def prepare_input(args):
     input_data.add_arg("--kmer-length", "text", description="kmer size to be used in merqury (use 16 for 3Mpb, check with: $MERQURY/best_k.sh <genome_size>)")
     input_data.parse(args)
     return input_data
+
+# --- input sanity checks
 
 def sanity_check(fwd_reads, rev_reads, fasta_WGA, output_dir, reduced_tree, kmer):
     try:
@@ -36,6 +42,8 @@ def sanity_check(fwd_reads, rev_reads, fasta_WGA, output_dir, reduced_tree, kmer
         else:
             os.mkdir(output_dir)
 
+# --- core function
+
 def eval_WGA_quality(fwd_reads, rev_reads, fasta_WGA, output_dir, reduced_tree=True, kmer="16"):
     # sanity check
     sanity_check(fwd_reads, rev_reads, fasta_WGA, output_dir, reduced_tree, kmer)
@@ -48,10 +56,10 @@ def eval_WGA_quality(fwd_reads, rev_reads, fasta_WGA, output_dir, reduced_tree=T
     out = merge_two_dicts(out, out_merqury.get_files())
     return out
      
+# --- caller function
 
-if __name__ == "__main__":
-    
-    in_manager = prepare_input(sys.argv[1:])
+def WGA_quality_check(args):
+    in_manager = prepare_input(args)
 
     fwd_reads = in_manager["--fastq-fwd"]["value"]
     rev_reads = in_manager["--fastq-rev"]["value"]
@@ -67,3 +75,9 @@ if __name__ == "__main__":
     print("\tquast_report_html : " + output["quast_report_html"])
     print("\tmerqury_output_dir : " + output["merqury_output_dir"])
     print("check " + output_dir + " for other reports")
+    return output
+
+if __name__ == "__main__":
+    WGA_quality_check(sys.argv[1:])
+    
+    

@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
+# --- imports
+
 import sys
 import os
 from WGALP.utils.input_manager import InputManager
 from WGALP.utils.input_manager import check_files
 from WGALP.utils.input_manager import check_folders
 from sub_workflows.extract_plasmids import Recycler
+
+# --- input arguments
 
 def prepare_input(args):
     input_data = InputManager("Wrapper to easily run recycler and inferr plasmid from genome assembly graphs")
@@ -17,6 +21,8 @@ def prepare_input(args):
     input_data.add_arg("--output", "dir", description="output folder")
     input_data.parse(args)
     return input_data
+
+# --- input sanity checks
 
 def sanity_check(output_dir, fastq_fwd, fastq_rev, contigs, assembly_graph, kmer_length):
     check_files([fastq_fwd, fastq_rev, contigs, assembly_graph])
@@ -36,6 +42,8 @@ def sanity_check(output_dir, fastq_fwd, fastq_rev, contigs, assembly_graph, kmer
         raise
     
 
+# --- core functions
+
 def run_plasmid_extraction(output_dir, fastq_fwd, fastq_rev, contigs, assembly_graph, kmer_length=127):
     # sanity check
     sanity_check(output_dir, fastq_fwd, fastq_rev, contigs, assembly_graph, kmer_length)
@@ -52,9 +60,10 @@ def run_plasmid_extraction(output_dir, fastq_fwd, fastq_rev, contigs, assembly_g
     step.delete_checkpoint()
     return(out)
      
-if __name__ == "__main__":
-    
-    in_manager = prepare_input(sys.argv[1:])
+# --- caller function
+
+def run_recycle(args):
+    in_manager = prepare_input(args)
 
     fastq_fwd = in_manager["--fastq-fwd"]["value"]
     fastq_rev = in_manager["--fastq-rev"]["value"]
@@ -68,6 +77,11 @@ if __name__ == "__main__":
     print("task completed successfully")
     print("the fasta file with the inferred plasmids is at the following location:")
     print("\t" + "plasmid_fasta" + " : " + output["plasmid_fasta"])
+    return output
+
+if __name__ == "__main__":
+    run_recycle(sys.argv[1:])
+    
 
     
 
