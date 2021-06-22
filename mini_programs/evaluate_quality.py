@@ -21,6 +21,7 @@ def prepare_input(args):
     input_data.add_arg("--kraken-db", "path", description="path to the (mini)kraken database")
     input_data.add_arg("--memory-mapped", "flag", description="add this flag if you don't want to load the (mini)kraken db in RAM (so, when using a ramdisk)")
     input_data.add_arg("--just-kraken", "flag", description="add this flag if you just want to run kraken/bracken (if you have, decontamined reads for example)")
+    input_data.add_arg("--trimmomatic-args", "text", description="override default trimmomatic settings, write this field as a single string\n\t\tcare that this code will be interpreted direcly by the bash shell, adding ;, |, &&, etc.. may break the execution\n\t\tby default we use: SLIDINGWINDOW:5:20 ILLUMINACLIP:TruSeq2-PE.fa:2:30:10")
     input_data.parse(args)
     return input_data
 
@@ -38,14 +39,15 @@ def sanity_check(fastq_fwd, fastq_rev, output_dir):
 
 # --- core function
 
-def run_quality_evaluation(fastq_fwd, fastq_rev, output_dir, kraken_db, memory_mapped, just_kraken):
+def run_quality_evaluation(fastq_fwd, fastq_rev, output_dir, kraken_db, memory_mapped, just_kraken, trimmomatic_args):
     # sanity check
     sanity_check(fastq_fwd, fastq_rev, output_dir)
     
     if not just_kraken:
         args = {
             "fastq_fwd" : fastq_fwd,
-            "fastq_rev" : fastq_rev
+            "fastq_rev" : fastq_rev,
+            "trimmomatic_args" : trimmomatic_args
         }
         trimming = TrimFastq("fastq_trimming", output_dir)
         trimmed_reads = trimming.run(args)
@@ -70,8 +72,9 @@ def evaluate_quality(args):
     kraken_db = in_manager["--kraken-db"]["value"]
     memory_mapped = in_manager["--memory-mapped"]["value"]
     just_kraken = in_manager["--just-kraken"]["value"]
+    trimmomatic_args = in_manager["--trimmomatic-args"]["value"]
     
-    output = run_quality_evaluation(fastq_fwd, fastq_rev, output_dir, kraken_db, memory_mapped, just_kraken)
+    output = run_quality_evaluation(fastq_fwd, fastq_rev, output_dir, kraken_db, memory_mapped, just_kraken, trimmomatic_args)
 
     print("task completed successfully")
     if not just_kraken:

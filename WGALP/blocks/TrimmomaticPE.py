@@ -20,16 +20,18 @@ two fastq files of paired trimmed reads
 """
 
 ### Wrapper
-def TrimmomaticPE(name, rootpath, raw_fwd, raw_rev, execution_mode = "on_demand"):
+def TrimmomaticPE(name, rootpath, raw_fwd, raw_rev, execution_mode = "on_demand", trimmomatic_args=None):
     step = Step(name, rootpath, execution_mode=execution_mode)
     step.set_command(TrimmomaticPE_runner)
     step_args = {
         "raw_fwd" : raw_fwd,
-        "raw_rev" : raw_rev
+        "raw_rev" : raw_rev,
+        "trimmomatic_args" : trimmomatic_args
     }
     step.run(step_args)
     step.set_description(description, input_description, output_description)
     return step
+
 
 # Example bash command:
 #
@@ -52,25 +54,26 @@ def TrimmomaticPE_runner(step, args):
     """
     f1 = args["raw_fwd"]
     f2 = args["raw_rev"]
+    trimmomatic_args = args["trimmomatic_args"]
 
     basenamef1 = os.path.basename(f1)
     basenamef2 = os.path.basename(f2)
-
+    
     out_FT = add_tag("trimmed", basenamef1) 
     out_FD = add_tag("discarded", basenamef1)
     out_RT = add_tag("trimmed", basenamef2)
     out_RD = add_tag("discarded", basenamef2)
 
-    defaults_slidingwindow = ["5", "20"]
-    defaults_illuminaclip = ["TruSeq2-PE.fa", "2", "30", "10"]
+    command =  "TrimmomaticPE " + f1 + " " + f2 + " "
+    command += os.path.join(step.outpath, out_FT) + " " + os.path.join(step.outpath, out_FD) + " "
+    command += os.path.join(step.outpath, out_RT) + " " + os.path.join(step.outpath, out_RD) + " "
 
-    command = (
-        "TrimmomaticPE " + f1 + " " + f2 + " "
-        "" + os.path.join(step.outpath, out_FT) + " " + os.path.join(step.outpath, out_FD) + " "
-        "" + os.path.join(step.outpath, out_RT) + " " + os.path.join(step.outpath, out_RD) + " "
-        "SLIDINGWINDOW:" + ":".join([default(args, "slidingwindow", defaults_slidingwindow[i], i) for i in range(len(defaults_slidingwindow))]) + " "
-        "ILLUMINACLIP:" + ":".join([default(args, "illuminaclip", defaults_illuminaclip[i], i) for i in range(len(defaults_illuminaclip))]) + " "
-    )
+
+    if trimmomatic_args is None:
+        # use defaults
+        command += "SLIDINGWINDOW:5:20 ILLUMINACLIP:TruSeq2-PE.fa:2:30:10 "
+    else:
+        command += trimmomatic_args + " "
 
     if step.execution_mode != "read":
         run_sp(step, command)

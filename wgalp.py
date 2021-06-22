@@ -15,6 +15,9 @@ from mini_programs.filter_fasta import select_contigs
 from mini_programs.prokka_annotate import prokka_annotate
 from mini_programs.run_recycle import run_recycle
 from mini_programs.eval_WGA_quality import WGA_quality_check
+from mini_programs.understand_origin import understand_origin
+from mini_programs.kdb_load import kdb_load
+from mini_programs.kdb_unload import kdb_unload
 
 def help():
     out = " --- wgalp: a pipeline for bacterial Whole Genome Assembly ---\n\n"
@@ -26,11 +29,14 @@ def help():
     out += "\tassemble : assemble reads into scaffolds or contigs\n"
     out += "\tcheck-coverage : compute coverage statistics of an assembled genome\n"
     out += "\treorder : reorder a whole genome assembly using a reference genome\n"
-    out += "\tfilter-contigs : select contigs by ID\n"
-    out += "\t                 (to be used with the webapp: https://redsnic.shinyapps.io/ContigCoverageVisualizer/)\n"
+    out += "\tfilter-assembly : select contigs by ID\n"
+    out += "\t                  (to be used with the webapp: https://redsnic.shinyapps.io/ContigCoverageVisualizer/)\n"
     out += "\tannotate : run prokka annotation with NCBI standard\n"
     out += "\tplasmid : extract putative plasmids using recycler\n"
     out += "\tquality : evaluate assembly quality using checkM, merqury and quast\n"
+    out += "\tunderstand-origin : runs kraken2 in selection mode\n"
+    out += "\tkdb-load : pre-load kraken2 database in RAM, so that you dont have to load it multiple times (use --memory-mapped option when possible)\n"
+    out += "\tkdb-unload : remove loaded kraken2 db from RAM\n"
     out += "\thelp : show this message (equivalent to --help or -h)\n"
     out += "\nRun wgalp <program> --help for specific information about the selected program.\n"
     return out
@@ -43,10 +49,13 @@ if __name__ == "__main__":
         "assemble" : assemble_with,
         "check-coverage" : check_coverage,
         "reorder" : order_contigs,
-        "filter-contigs" : select_contigs,
+        "filter-assembly" : select_contigs,
         "annotate" : prokka_annotate,
         "plasmid" : run_recycle,
-        "quality" : WGA_quality_check 
+        "quality" : WGA_quality_check,
+        "understand-origin" : understand_origin,
+        "kdb-load" : kdb_load,
+        "kdb-unload" : kdb_unload
     }
 
     if len(sys.argv) == 1:
