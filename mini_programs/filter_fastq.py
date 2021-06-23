@@ -31,8 +31,8 @@ def sanity_check(output_dir, fastq, fastq_fwd, fastq_rev, selected_reads, comple
     if fastq is None and not (fastq_fwd is not None and fastq_rev is not None):
         raise Exception("For PE mode both fwd and rev fastq files must be specified, use --help for more information")
 
-    # files/dirs check
-    check_files(selected_reads)
+    # files/dirs check 
+    check_files([selected_reads])
     if fastq is None:
         check_files([fastq_fwd, fastq_rev])
     else:
