@@ -74,7 +74,11 @@ def select_fastq(args):
 
     print("task completed successfully")
     print("The filtered .fastq is at the following location:")
-    print("\t" + "filtered_fastq" + " : " + os.path.join(output_dir, "filtered.fastq"))
+    if fastq is None:
+        print("\t" + "filtered_fastq" + " : " + os.path.join(output_dir, "filtered.fastq"))
+    else:
+        print("\t" + "filtered_fastq_fwd" + " : " + os.path.join(output_dir, "filtered_fwd.fastq"))
+        print("\t" + "filtered_fastq_rev" + " : " + os.path.join(output_dir, "filtered_rev.fastq"))
     return os.path.join(output_dir, "filtered.fastq")
 
 if __name__ == "__main__":
