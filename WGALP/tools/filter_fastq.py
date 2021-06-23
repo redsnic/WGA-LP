@@ -19,7 +19,7 @@ def make_read_set(fastq_files, output_path):
     outf = open(output_path, "w")
     outf.writelines("\n".join(IDs))
     outf.close()
-
+ 
 def filter_fastq_reads( fastq_file_path, selected_reads, out_file_name, keep=False):
     """
     Filter unwanted reads from a fastq files
@@ -61,6 +61,7 @@ def filter_fastq_reads( fastq_file_path, selected_reads, out_file_name, keep=Fal
     fastq_file.close()
     bad_reads_file.close()
     out_file.close()
+
         
     
 

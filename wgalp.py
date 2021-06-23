@@ -18,6 +18,7 @@ from mini_programs.eval_WGA_quality import WGA_quality_check
 from mini_programs.understand_origin import understand_origin
 from mini_programs.kdb_load import kdb_load
 from mini_programs.kdb_unload import kdb_unload
+from mini_programs.filter_fastq import select_fastq
 
 def help():
     out = " --- wgalp: a pipeline for bacterial Whole Genome Assembly ---\n\n"
@@ -37,6 +38,7 @@ def help():
     out += "\tunderstand-origin : runs kraken2 in selection mode\n"
     out += "\tkdb-load : pre-load kraken2 database in RAM, so that you dont have to load it multiple times (use --memory-mapped option when possible)\n"
     out += "\tkdb-unload : remove loaded kraken2 db from RAM\n"
+    out += "\tfilter-fastq : select reads from a fastq file\n"
     out += "\thelp : show this message (equivalent to --help or -h)\n"
     out += "\nRun wgalp <program> --help for specific information about the selected program.\n"
     return out
@@ -55,7 +57,8 @@ if __name__ == "__main__":
         "quality" : WGA_quality_check,
         "understand-origin" : understand_origin,
         "kdb-load" : kdb_load,
-        "kdb-unload" : kdb_unload
+        "kdb-unload" : kdb_unload,
+        "filter-fastq" : select_fastq
     }
 
     if len(sys.argv) == 1:
