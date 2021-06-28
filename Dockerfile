@@ -120,7 +120,7 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB
 add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/' &&\
 apt update &&\
 apt install -y r-base &&\
-echo -e 'install.packages("argparse")\ninstall.packages("ggplot2")\ninstall.packages("scales")\nq()' | R --no-save 
+echo -e 'install.packages("argparse")\ninstall.packages("ggplot2")\ninstall.packages("scales")\ninstall.packages("tidyverse")\nq()' | R --no-save 
 
 
 # --- install merqury

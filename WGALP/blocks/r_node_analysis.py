@@ -45,10 +45,13 @@ def view_runner(step, args):
     mode = args["mode"]
     nodes = args["nodes"]
 
+    script_path = os.path.split(os.path.realpath(__file__))[0]
+    script_path = os.path.join(script_path, "../../RScripts/pileupVisualizer.R")
+
     if mode == "view":
-        command = "Rscript RScripts/pileupVisualizer.R --args " + mode + " " + f1 + " " + step.outpath + " " + " ".join(nodes) + " "
+        command = "Rscript " + script_path + " --args " + mode + " " + f1 + " " + step.outpath + " " + " ".join(nodes) + " "
     else:
-        command = "Rscript RScripts/pileupVisualizer.R --args " + mode + " " + f1 + " " + step.outpath + " "
+        command = "Rscript " + script_path + " --args " + mode + " " + f1 + " " + step.outpath + " "
 
     if step.execution_mode != "read":
         run_sp(step, command)

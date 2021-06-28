@@ -1,0 +1,13 @@
+name: ContigCoverageVisualizer
+title: ContigCoverageVisualizer
+username:
+account: redsnic
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4274271
+bundleId: 4764237
+url: https://redsnic.shinyapps.io/ContigCoverageVisualizer/
+when: 1624881660.94509
+lastSyncTime: 1624881660.94511
+asMultiple: FALSE
+asStatic: FALSE
