@@ -19,6 +19,7 @@ from mini_programs.understand_origin import understand_origin
 from mini_programs.kdb_load import kdb_load
 from mini_programs.kdb_unload import kdb_unload
 from mini_programs.filter_fastq import select_fastq
+from mini_programs.view_nodes import view_nodes
 
 def help():
     out = " --- wgalp: a pipeline for bacterial Whole Genome Assembly ---\n\n"
@@ -29,6 +30,7 @@ def help():
     out += "\tdecontaminate : remove reads mapping to a contaminant non ambiguosly\n"
     out += "\tassemble : assemble reads into scaffolds or contigs\n"
     out += "\tcheck-coverage : compute coverage statistics of an assembled genome\n"
+    out += "\tview-nodes : compute coverage plots for specific nodes of a whole genome assembly"
     out += "\treorder : reorder a whole genome assembly using a reference genome\n"
     out += "\tfilter-assembly : select contigs by ID\n"
     out += "\t                  (to be used with the webapp: https://redsnic.shinyapps.io/ContigCoverageVisualizer/)\n"
@@ -50,6 +52,7 @@ if __name__ == "__main__":
         "decontaminate" : decontamination_workflow,
         "assemble" : assemble_with,
         "check-coverage" : check_coverage,
+        "view-nodes" : view_nodes,
         "reorder" : order_contigs,
         "filter-assembly" : select_contigs,
         "annotate" : prokka_annotate,

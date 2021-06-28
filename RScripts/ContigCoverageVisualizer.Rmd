@@ -1,0 +1,294 @@
+---
+title: "Evaluate Node Coverage in bacterial WGA"
+output: html_document
+author: Nicolò Rossi
+runtime: shiny
+---
+
+```{r, echo=F, results=F, warning=FALSE, include=F}
+knitr::opts_chunk$set(echo = F, fig.align="center")
+library(factoextra)
+library(tidyverse)
+library(mclust)
+library(DT)
+library(ggraph)
+library(neighbr)
+library(plotly)
+
+### reactive variables declaration
+
+options(shiny.maxRequestSize=1024^3)
+rv <- reactiveValues()
+
+rv$dataset <- data.frame()
+rv$text <- ""
+# plots
+rv$Kmeans1D <- NULL
+rv$Kmeans2D <- NULL
+rv$mixture <- NULL
+rv$custom <- NULL
+rv$set_dataset <- FALSE
+
+# load .summary dataset
+load_dataset <- function(){
+  try({
+    filepath <- input$uploadedFile$datapath
+    mean.report <- read_tsv(filepath) %>% 
+      select(-X1) %>% # remove index
+      arrange(desc(Coverage)) %>% 
+      mutate(lcov=scale(log(Coverage)),llen=scale(log(Length))) # TODO
+    rv$dataset <- mean.report
+    rv$set_dataset <- TRUE
+  })
+}
+
+ALPHA_VALUE <- 0.7
+```
+
+
+With this simple web application it is possible to assess the coverage distribution among the different nodes created by a Whole Genome Assembly pipeline, such as **SPAdes**.
+
+
+### File upload 
+
+Upload you coverage file. This must the `depth_summary` file created by the `check_coverage.py` script (`wgalp check-coverage` command):
+
+```{r}
+fileInput("uploadedFile", "Choose File", multiple = FALSE) %>% shiny::tagAppendAttributes(style = 'width: 100%;')
+actionButton("loadData", "Load new dataset") %>% shiny::tagAppendAttributes(style = 'width: 100%;')
+observeEvent(input$loadData, { load_dataset() })
+```
+
+### Tabular view
+
+You can sort and filter the table as you prefer:
+
+```{r}
+renderDataTable({
+  datatable(rv$dataset, options = list("pageLength" = 10), filter="bottom")
+})
+```
+
+### Node distribution
+
+```{r}
+
+scatter_plotter <- function(p){ 
+  renderPlotly({
+    ggplotly(p, tooltip=c("x", "y", "text")) %>%
+      layout(legend=list(title=list(text='<b> Clusters </b>'))) 
+  }) 
+}
+
+# aux function for 1D k-means, computes the position of a line dividing the two clusters
+get_boundary <- function(df, scaled=T){
+    df1 <- df %>% filter(clusters==1)
+    df2 <- df %>% filter(clusters==2)
+    m1 <- mean(pull(df1,Coverage))
+    m2 <- mean(pull(df2,Coverage))
+    
+    if(!scaled){
+        if(m1 > m2){
+            return( (min(pull(df1,Coverage)) + max(pull(df2,Coverage)))/2 )    
+        }else{
+            return( (max(pull(df1,Coverage)) + min(pull(df2,Coverage)))/2 )     
+        }
+    }else{
+        if(m1 > m2){
+            return( (min(pull(df1,lcov)) + max(pull(df2,lcov)))/2 )    
+        }else{
+            return( (max(pull(df1,lcov)) + min(pull(df2,lcov)))/2 )     
+        }
+    }
+}
+
+# 1 dimensional K means
+Kmeans1D <- function(after=FALSE){
+  out_plots <- list()
+  if(after){
+    mean.report <- rv$dataset %>% filter(input$boundary<Coverage)
+  }else{
+    mean.report <- rv$dataset
+  }
+  out_plots[[1]] <- fviz_nbclust(mean.report %>% select(lcov), kmeans, method = "silhouette")
+  kmeans_clusters1D <- kmeans(mean.report %>% select(lcov),2)
+  mean.report <- mean.report %>% mutate(clusters = kmeans_clusters1D$cluster)
+  out_plots[[2]] <- ggplot(mean.report) + 
+      geom_point(aes(x=Coverage,y=Length, text=mean.report$Name, color=as.factor(clusters)), alpha=ALPHA_VALUE) +
+      geom_vline(xintercept = get_boundary(mean.report, scaled=F) ) +
+      scale_x_log10() + 
+      scale_y_log10()
+  
+  if(after){
+    rv$Kmeans1D_after <- scatter_plotter(out_plots[[2]])
+  }else{
+    rv$Kmeans1D <- scatter_plotter(out_plots[[2]])  
+  }
+  
+}
+
+# 2 dimensional K means
+Kmeans2D <- function(after=FALSE){
+  out_plots <- list()
+  if(after){
+    mean.report <- rv$dataset %>% filter(input$boundary<Coverage)
+  }else{
+    mean.report <- rv$dataset
+  }
+  out_plots[[1]] <- fviz_nbclust(mean.report %>% select(lcov, llen), kmeans, method = "silhouette")
+  kmeans_clusters1D <- kmeans(mean.report %>% select(lcov, llen),4)
+  mean.report <- mean.report %>% mutate(clusters = kmeans_clusters1D$cluster)
+  out_plots[[2]] <- ggplot(mean.report) + 
+    geom_point(aes(x=Coverage,y=Length, text=mean.report$Name, color=as.factor(clusters)), alpha=ALPHA_VALUE) +
+    scale_x_log10() + 
+    scale_y_log10() 
+  
+  if(after){
+    rv$Kmeans2D_after <- scatter_plotter(out_plots[[2]])  
+  }else{
+    rv$Kmeans2D <- scatter_plotter(out_plots[[2]])
+  }
+  
+}
+
+# gaussian misture model
+mclust_model <- function(after=FALSE){
+  # mixture clustering
+  if(after){
+    mean.report <- rv$dataset %>% filter(input$boundary<Coverage)
+  }else{
+    mean.report <- rv$dataset
+  }
+  BIC <- mclustBIC(mean.report %>% select(lcov, llen))
+  mclust_model <- mclustModel(mean.report %>% select(lcov, llen), BIC)
+  mclust_clusters <- apply(mclust_model$z, 1, which.max)
+  mean.report <- mean.report %>% mutate(clusters = mclust_clusters) 
+  plot <- ggplot(mean.report) + 
+    geom_point(aes(x=Coverage, y=Length, text=mean.report$Name, color=as.factor(clusters)), alpha=ALPHA_VALUE) +
+    scale_x_log10() + 
+    scale_y_log10() 
+  
+  if(after){
+    rv$mixture_after <- scatter_plotter(plot)
+  }else{
+    rv$mixture <- scatter_plotter(plot)  
+  }
+  
+}
+
+# custom boundary
+custom <- function(after = FALSE){
+  limit <- input$boundary
+  if(after){
+    mean.report <- rv$dataset %>% filter(input$boundary<Coverage)
+  }else{
+    mean.report <- rv$dataset
+  }
+  plot <- ggplot(mean.report) + 
+    geom_point(aes(x=Coverage, y=Length, text=mean.report$Name, color=limit<Coverage), alpha=ALPHA_VALUE) +
+    geom_vline(xintercept = limit ) +
+    scale_x_log10() + 
+    scale_y_log10() 
+  
+  if(!after){
+    rv$custom <- scatter_plotter(plot)
+  }
+  
+  coverage_ <- ggplot(mean.report) + 
+    geom_density(aes(x=Coverage), color="blue") +
+    scale_x_log10()
+  length_ <- ggplot(mean.report) +
+    geom_density(aes(x=Length), color="red") +
+    scale_x_log10()
+  normsd_ <- ggplot(mean.report) +
+    geom_density(aes(x=Sd/Coverage)) +
+    labs(x="standardized (sd / coverage)")
+  
+  if(after){
+    rv$coverage_after <- coverage_
+    rv$length_after <- length_
+    rv$normsd_after <- normsd_
+  }else{
+    rv$coverage <- coverage_
+    rv$length <- length_
+    rv$normsd <- normsd_
+  }
+    
+}
+
+# --- UI
+
+numericInput("boundary", "Set custom boundary", 20, min=0)
+
+renderUI({
+  mainPanel(
+      tabsetPanel(id = "inputTabs",
+          tabPanel("custom", rv$custom),
+          tabPanel("1D-Kmeans", rv$Kmeans1D),
+          tabPanel("2D-Kmeans", rv$Kmeans2D),
+          tabPanel("Mixture", rv$mixture),
+          tabPanel("Coverage", renderPlot({rv$coverage})),
+          tabPanel("Length", renderPlot({rv$length })),
+          tabPanel("Normalized sd", renderPlot({rv$normsd}))
+      )
+  ) %>% shiny::tagAppendAttributes(style = 'width: 100%;')
+})
+  
+reactive({
+  if(rv$set_dataset){
+    Kmeans1D()
+    Kmeans2D()
+    mclust_model()
+    rv$set_dataset <- FALSE
+  }
+  custom()
+})
+
+```
+
+### Selected nodes
+
+```{r}
+renderPrint({
+  rv$dataset %>% filter(Coverage>=input$boundary) %>% pull(Name) %>% paste(collapse="\n") %>% cat
+})
+```
+
+Copy these lines into a file to filter the nodes with `filter_fasta.py` script.
+
+### After selection
+
+Check the status after the application of the custom boundary. This can be useful to 
+refine the analysis.
+
+```{r}
+renderUI({
+  mainPanel(
+      tabsetPanel(id = "inputTabs_after",
+          tabPanel("1D-Kmeans", rv$Kmeans1D_after),
+          tabPanel("2D-Kmeans", rv$Kmeans2D_after),
+          tabPanel("Mixture", rv$mixture_after),
+          tabPanel("Coverage", renderPlot({rv$coverage_after})),
+          tabPanel("Length", renderPlot({rv$length_after})),
+          tabPanel("Normalized sd", renderPlot({rv$normsd_after}))
+      )
+  ) %>% shiny::tagAppendAttributes(style = 'width: 100%;')
+})
+
+reactive({
+  Kmeans1D(after=T)
+  Kmeans2D(after=T)
+  mclust_model(after=T)
+  custom(after=T)
+})
+
+```
+
+
+
+
+
+
+
+
+
