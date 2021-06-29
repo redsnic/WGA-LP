@@ -1,4 +1,7 @@
-# remove contigs with coverage less than a thresold
+#!/usr/bin/env python3
+
+# remove contigs with coverage less than a thresold,
+# this is a minimal script that works on SPAdes nodes only
 
 # usage: python remove_spades_lowcoverage.py scaffolds.fasta 20.35 mode
 # mode can be (remove nodes with) less or greater (coverage)

@@ -1,16 +1,10 @@
 from WGALP.workflow import Workflow
-
 from WGALP.blocks.BWA import BWA
 from WGALP.blocks.samtools_VSI import samtools_VSI
 from WGALP.blocks.samtools_depth import samtools_depth
-from WGALP.blocks.BWA import BWA
 from WGALP.blocks.bwa_index import bwa_index
 
-#    args_dict = {
-#        "fastq_fwd" : fastq_fwd, 
-#        "fastq_rev" : fastq_rev, 
-#        "contigs" : contigs
-#    }
+# --- Run the steps necessary to extract coverage information from fastq and reference files
 
 class ComputeCoverage(Workflow):
     

@@ -36,6 +36,9 @@ def add_tag(tag, filename):
 
 
 def get_files_recursively(directory):
+    """
+    Get a list of the absolute paths of all the files present in a direcory, recursively
+    """
     files = []
     for base_path, _, sub_files in os.walk(directory):
         # make relative paths
@@ -45,15 +48,17 @@ def get_files_recursively(directory):
             files += [ os.path.join(base_path, x)[len(directory)+1:] for x in sub_files ]
     return files
 
-
 def merge_two_dicts(x, y):
-    """Given two dictionaries, merge them into a new dict as a shallow copy."""
+    """
+    Given two dictionaries, merge them into a new dict as a shallow copy.
+    """
     for key, value in y.items():
         x[key] = value
     return x
 
 def binary_search(a, x):
     """
+    Exactly what it looks like
     a: sorted db
     x: element
     """

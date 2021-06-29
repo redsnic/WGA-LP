@@ -6,13 +6,13 @@ from WGALP.utils.commandLauncher import run_sp
 from WGALP.step import Step
 
 description = """
-run kraken tool
+given a kraken2 report, compute the probability of possible origin of the DNA sequences
 """
 input_description = """
-...
+A kraken2 report, along with pointers to kraken2 database
 """
 output_description = """
-...
+A couple of reports, specifing the imputed source of DNA fragments
 """
 
 ### Wrapper
@@ -30,13 +30,12 @@ def bracken(name, rootpath, kraken_report, kraken_db, execution_mode = "on_deman
 ### Runner
 def bracken_runner(step, args):
     """
-    given a pair of fastq files, compute the possible origin of the DNA sequences
     input:
-    {
-        "kraken_report" (full path)
-        "kraken_db" (full path)
-    }
-    :param args: a dictionary of the arguments
+        kraken_report : path
+        kraken_db : path
+    output:
+        bracken_report : a summary containing the origin of reads/nodes 
+        bracken_log : log of the execution 
     """
     f1 = args["kraken_report"]
     db = args["kraken_db"]

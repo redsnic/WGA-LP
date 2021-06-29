@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 
-# MAIN PROGRAM 
-
+# This script operates as caller for the many components of wgalp's pipeline
 
 import sys
-
-# todo import pipeline programs (they take in input just the args!)
+# -- import mini programs
 from mini_programs.evaluate_quality import evaluate_quality
 from mini_programs.decontamination_workflow import decontamination_workflow
 from mini_programs.assemble_with import assemble_with
@@ -22,6 +20,9 @@ from mini_programs.filter_fastq import select_fastq
 from mini_programs.view_nodes import view_nodes
 
 def help():
+    """
+    print an help message
+    """
     out = " --- wgalp: a pipeline for bacterial Whole Genome Assembly ---\n\n"
     out += "This programs is an helper to run the sub procedures of wgalp\n"
     out += "usage: wgalp <program> [args]\n\n"
@@ -64,13 +65,19 @@ if __name__ == "__main__":
         "filter-fastq" : select_fastq
     }
 
+    # check correctness of the arguments
+
     if len(sys.argv) == 1:
         print(help())
         exit()
 
+    # show help 
+
     if sys.argv[1] in ["help", "--help", "-h"]:
         print(help())
         exit()
+
+    # call sub program
 
     try:
         options[sys.argv[1]]
@@ -80,8 +87,5 @@ if __name__ == "__main__":
 
     # run program
     options[sys.argv[1]](sys.argv[2:])
-
-
-
 
 

@@ -15,7 +15,7 @@ from WGALP.utils.genericUtils import merge_two_dicts
 # --- input arguments
 
 def prepare_input(args):
-    input_data = InputManager("Run tools to evaluate WGA quality (CheckM ... TODO)")
+    input_data = InputManager("Run tools to evaluate WGA quality")
     input_data.add_arg("--fastq-fwd", "path", description="raw forward reads (.fastq)")
     input_data.add_arg("--fastq-rev", "path", description="raw reverse reads (.fastq)")
     input_data.add_arg("--assembly", "path", description="WGA assembly to evaluate (.fasta)")

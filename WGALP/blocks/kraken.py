@@ -11,10 +11,11 @@ description = """
 run kraken tool
 """
 input_description = """
-...
+A PE pair of fastq files, along with pointers to kraken2 database
 """
 output_description = """
-...
+A report and a log file. The latter is useful to find the exact imputed origin 
+of each node/read evaluated by kraken2
 """
 
 # Wrapper
@@ -36,17 +37,16 @@ def kraken(name, rootpath, kraken_db, memory_mapped, fastq1 = None, fastq2 = Non
 ### Runner
 def kraken_runner(step, args):
     """
-    given a pair of fastq files, compute the possible origin of the DNA sequences
     input:
-    {
-        "fastq1" (full path)
-        (aux) "fastq2" (full path)
-        "fasta" (full path)
-        "kraken_db" (full path)
-        "memory_mapped" (boolean) [highly recommanded]
-        (aux) "n_threads" 
-    }
-    :param args: a dictionary of the arguments
+        fastq1 : path
+        (aux) fastq2 : path (PE mode)
+        fasta : path (fasta mode)
+        kraken_db : path to kraken db folder
+        memory_mapped : flag [highly recommanded for multiple calls when kraken_db is stored in a ramdisk]
+        (aux) n_threads : number of threads to be used (default: use all available threads) 
+    output:
+        kraken_log : this log stores, among others, the association between read/nodes and probable organism of origin
+        kraken_report : report containing a summary of the fraction of nodes/reads probably belonging to a certain organism
     """
     fasta = args["fasta"]
     f1 = args["fastq1"]

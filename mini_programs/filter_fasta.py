@@ -12,7 +12,7 @@ from WGALP.utils.genericUtils import binary_search
 # --- input arguments
 
 def prepare_input(args):
-    input_data = InputManager("Select only listed contigs from a Whole Genom Assembly")
+    input_data = InputManager("Select nodes by ID from a Whole Genom Assembly")
     input_data.add_arg("--contigs", "path", description="assembled contigs or scaffolds (.fasta)")
     input_data.add_arg("--selected-contigs", "path", description="a file containing the ids of the selected contigs (each id is in its own line)")
     input_data.add_arg("--complement", "flag", description="if set, keeps contigs not in list") 

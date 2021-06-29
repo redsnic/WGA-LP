@@ -7,13 +7,13 @@ from WGALP.utils.commandLauncher import run_sp
 from WGALP.step import Step
 
 description = """
-Run checkM
+Run checkM to asses WGA quality
 """
 input_description = """
 a fasta file of the WGA
 """
 output_description = """
-A log file
+A log file containing a table reporting the quality of the assmebly
 """
 
 ### Wrapper
@@ -35,12 +35,11 @@ def checkM_lineage_runner(step, args):
     """
     run checkM on a fasta file
     input: 
-    {
-        "fasta_file" (full path)
-        "reduced_tree" (use reduced tree, True by default)
-        (aux) "n_threads"  
-    }
-    :param args: a dictionary of the arguments
+        fasta_file : path
+        reduced_tree : flag (use reduced tree, True by default)
+        (aux) n_threads : number of threads to be used (default: use all available threads)   
+    output:
+        checkm_report_table : a plain text log
     """
     f1 = args["fasta_file"]
 

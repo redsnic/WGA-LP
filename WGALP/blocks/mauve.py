@@ -8,13 +8,13 @@ from WGALP.utils.genericUtils import *
 from WGALP.step import Step
 
 description = """
-Run mauve to reorder contigs
+Run mauve to reorder the nodes of a WGA by using a known reference
 """
 input_description = """
-the reference and the assembled genome to be ordered
+The reference and the assembled genome to be ordered
 """
 output_description = """
-the ordered reference 
+the ordered assembled genome 
 """
 
 ### Wrapper
@@ -32,13 +32,11 @@ def mauve_contig_sorting(name, rootpath, reference, contigs, execution_mode = "o
 ### Runner
 def mauve_contig_sorting_runner(step, args):
     """
-    run BWA alignment on a pair or a single fastq file
     input:
-    {
-        "reference" (full path)
-        "contigs" (full path)
-    }
-    :param args: a dictionary of the arguments
+        reference : path (reference to order nodes)
+        contigs : path (fasta formatted nodes to be ordered)
+    output:
+        contigs : the ordered input nodes
     """
     contig = args["contigs"]
     ref = args["reference"]

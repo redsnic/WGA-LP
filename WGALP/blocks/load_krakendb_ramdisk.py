@@ -8,10 +8,10 @@ description = """
 load kraken_db in a ramdisk
 """
 input_description = """
-...
+the position (on disk) of the kraken2 database
 """
 output_description = """
-...
+the mounting point of the newly created ramdisk
 """
 
 ### Wrapper
@@ -28,14 +28,13 @@ def load_krakendb_ramdisk(name, rootpath, kraken_db, execution_mode = "on_demand
 ### Runner
 def krakendb_make_ramdisk_runner(step, args):
     """
-    load the krakendb into a ramdisk
     NOTE: this requires 8GB of free RAM, be careful not to forget the ramdisk loaded...
     [better to be run with "force"]
     input:
-    {
-        "kraken_db" (full path)
-    }
-    :param args: a dictionary of the arguments
+        kraken_db : path
+    output:
+        kraken_ram_db : position of kraken2 dabtabase in the ramdisk
+        kraken_ramdisk : ramdisk mounting point
     """
     db = args["kraken_db"]
 

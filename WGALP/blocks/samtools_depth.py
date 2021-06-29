@@ -8,15 +8,17 @@ from WGALP.utils.genericUtils import *
 from WGALP.step import Step
 
 description = """
-Run samtools depth 
+Run samtools depth to compute coverage statistics
 """
 input_description = """
-a bam file
+A bam file from which to extract the statistics
 """
 output_description = """
-coverage file 
+.depth and .depth.summary files, the fisrt is the direct output of samtools depth, 
+the latter is a semplification, useful to run node selection 
 """
 
+### Wrapper
 def samtools_depth(name, rootpath, bamfile, execution_mode = "on_demand"):
     step = Step(name, rootpath, execution_mode=execution_mode)
     step.set_command(samtools_depth_runner)
@@ -28,18 +30,21 @@ def samtools_depth(name, rootpath, bamfile, execution_mode = "on_demand"):
     return step
 
 def summarise_depth(depth_file, out_file):
+    """
+    prepare .depth.summary file
+    """
     df = pd.read_csv(depth_file, sep='\t', names=["Name", "Position", "NReads"])
     df = df.groupby(["Name"])["NReads"].agg(Length="count",Coverage="mean",Sd="std").reset_index()
     df.to_csv(out_file, sep="\t")
 
+### Runner
 def samtools_depth_runner(step, args):
     """
-    run samtools depth
     input:
-    {
-        "input_bam" (full path)
-    }
-    :param args: a dictionary of the arguments
+        input_bam : path
+    output:
+        depth_file : direct ouptut tsv from samtools depth
+        depth_summary : summarized ouptut for node distribution analysis
     """
 
     f1 = args["input_bam"]

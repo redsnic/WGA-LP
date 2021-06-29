@@ -8,13 +8,13 @@ from WGALP.utils.genericUtils import *
 from WGALP.step import Step
 
 description = """
-Run samtools (view, sort, index)
+Easily run samtools view, sort and index workflow
 """
 input_description = """
-a sam file plus the options for samtools
+A sam file plus the options for samtools' programs
 """
 output_description = """
-a sorted .bam file
+A sorted .bam file
 """
 
 ### Wrapper
@@ -35,17 +35,14 @@ def samtools_VSI(name, rootpath, samfile, view_flags=None, index=True, execution
 ### Runner
 def samtools_VSI_runner(step, args):
     """
-    execute the triple (view, sort, index) to 
-    prepare a .bam file from a sam file. 
     view and index component can be skipped
     input:
-    {
-        "input_sam" (full path)
-        (aux) "view_flags" (e.g. "-F 4")
-        "index" (boolean)
-        (aux) "outfile_name"
-    }
-    :param args: a dictionary of the arguments
+        input_sam : path
+        (aux) view_flags : text (e.g. "-F 4")
+        index : flag
+        (aux) outfile_name : text
+    output:
+        bamfile : sorted bam file as specified
     """
     f1 = args["input_sam"]
 

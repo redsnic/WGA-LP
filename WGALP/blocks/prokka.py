@@ -8,13 +8,13 @@ from WGALP.step import Step
 # Run trimming operations with TrimmomaticPE
 
 description = """
-Run Prokka annotation
+Run Prokka annotation (in NCBI compliant mode)
 """
 input_description = """
-a fasta file of contigs
+A fasta file resulting from a WGA (possibly filtered and ordered)
 """
 output_description = """
-the annotated genome (in many formats, .gff will be the default)
+the prokka annotated genome in many different formats
 """
 
 ### Wrapper
@@ -28,21 +28,17 @@ def prokka(name, rootpath, assembled_seqence, execution_mode="on_demand"):
     step.set_description(description, input_description, output_description)
     return step
 
-# Example bash command:
-#
-# TrimmomaticPE $f1.fastq $f2.fastq \
-#        $f1.trimmed.fastq $f1.discarded.fastq \
-#        $f2.trimmed.fastq $f2.discarded.fastq \
-#        SLIDINGWINDOW:5:20 \
-#        ILLUMINACLIP:TruSeq2-PE.fa:2:30:10
 def prokka_runner(step, args):
     """
     run Prokka annotation
     input:
-    {
-        "assembled_seqence" a fasta file containing the output of an assembler
-    }
-    :param args: a dictionary of the arguments
+        assembled_seqence : a fasta file containing the output of an assembler
+    output:
+        ffn : annotated genome in this format
+        faa : annotated genome in this format
+        gbk : annotated genome in this format
+        gff : annotated genome in this format
+        tsv : annotated genome in this format
     """
     f1 = args["assembled_seqence"]
 

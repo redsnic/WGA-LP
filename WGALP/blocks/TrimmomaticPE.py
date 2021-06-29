@@ -10,13 +10,13 @@ from WGALP.step import Step
 # Run trimming operations with TrimmomaticPE
 
 description = """
-Run TrimmomaticPE
+Run TrimmomaticPE to tream raw reads and remove adaptors
 """
 input_description = """
 two fastq files of paired raw reads
 """
 output_description = """
-two fastq files of paired trimmed reads
+fastq files of paired trimmed reads (and discarded reads)
 """
 
 ### Wrapper
@@ -40,17 +40,20 @@ def TrimmomaticPE(name, rootpath, raw_fwd, raw_rev, execution_mode = "on_demand"
 #        $f2.trimmed.fastq $f2.discarded.fastq \
 #        SLIDINGWINDOW:5:20 \
 #        ILLUMINACLIP:TruSeq2-PE.fa:2:30:10
+### Runner
 def TrimmomaticPE_runner(step, args):
     """
     run TrimmomaticPE to clean .fastq data
     input:
-    {
-        "raw_fwd" (full path)
-        "raw_rev" (full path) 
-        (aux) "slidingwindow" [windowSize,requiredQuality]
-        (aux) "illuminaclip" [fastaWithAdaptersEtc,seed mismatches,palindrome clip threshold,simple clip threshold]
-    }
-    :param args: a dictionary of the arguments
+        raw_fwd : path
+        raw_rev : path 
+        (aux) slidingwindow : [windowSize,requiredQuality]
+        (aux) illuminaclip : [fastaWithAdaptersEtc,seed mismatches,palindrome clip threshold,simple clip threshold]
+    output:
+        trimmed_fwd : trimmed forward reads
+        trimmed_rev : trimmed reverse reads
+        discarded_fwd : discarded forward reads
+        discarded_rev : dircarded reverse reads
     """
     f1 = args["raw_fwd"]
     f2 = args["raw_rev"]

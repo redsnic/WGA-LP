@@ -8,13 +8,13 @@ from WGALP.utils.genericUtils import *
 from WGALP.step import Step
 
 description = """
-Run BWA mem
+Run bwa mem
 """
 input_description = """
-the reference and the fastq to be aligned to it
+A reference and the fastq(s) to be aligned to it (can operate with single and PE reads)
 """
 output_description = """
-the samfile of the alignment
+A samfile of the alignment
 """
 
 ### Wrapper
@@ -34,16 +34,14 @@ def BWA(name, rootpath, reference, fastq1=None, fastq2=None, execution_mode = "o
 ### Runner
 def BWA_runner(step, args):
     """
-    run BWA alignment on a pair or a single fastq file
     input:
-    {
-        "fastq1" (full path)
-        (aux) "fastq2" (full path, only for PE alignment)
-        "reference" (full path)
-        (aux) "n_threads"
-        (aux) "output_filename" (name only)
-    }
-    :param args: a dictionary of the arguments
+        fastq1 : path 
+        (aux) fastq2 : path (only for PE alignment)
+        reference : path
+        (aux) n_threads : number of threads to be used (default, use all the available threads)
+        (aux) output_filename : text
+    output:
+        samfile : a SAM file of the alignment
     """
     f1 = args["fastq1"]
     paired_end_mode = "fastq2" in args

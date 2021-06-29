@@ -35,22 +35,30 @@ class InputManager():
 
     def parse(self, args):
         i = 0
+        # by default, the absence of arguments implies the help must be shown
         if len(args) == 0:
             print("--- no arguments given, printing help message ---")
             print(self.help())
             sys.exit(2) 
 
+        # loop to explore the arguments
         while i < len(args):
+
+            # --help interrupts the evaluation and prints the help message
             if args[i] == "--help":
                 print(self.help())
                 sys.exit(2)
 
+            # if the argument is one of the possible valid options
             if is_flag(args[i]):
                 try:
                     flag = self.flags[args[i]]
+                    # if it is a flag evaluate it as a boolean set at true
                     if flag["type"] == "flag":
                         flag["value"] = True
                         i = i + 1
+                    # if it is a list, incorporate all the following arguments 
+                    # in single list, until another known flag is found 
                     elif flag["type"] == "list":
                         j = i + 1
                         arg_list = []
@@ -61,12 +69,15 @@ class InputManager():
                             raise Exception("No arguments associated to this flag: " + args[i])
                         flag["value"] = arg_list
                         i = j
+                    # --- these flag types process only the argument after their position
+                    # if it is a path, evaluate its correctnes (must exist) 
                     elif flag["type"] == "path":
                         if i+1 <= len(args) and (os.path.isdir(args[i+1]) or os.path.isfile(args[i+1])):
                             flag["value"] = args[i+1]
                             i = i + 2
                         else:
                             raise Exception("Malformed input for flag: " + args[i])
+                    # if it is a dir, specifically check that it is actually a dir
                     elif flag["type"] == "dir":
                         if args[i+1].startswith("--"):
                             raise Exception("missing path for argument" + args[i])
@@ -74,6 +85,7 @@ class InputManager():
                             os.mkdir(args[i+1])
                         flag["value"] = args[i+1]
                         i = i + 2
+                    # finally, with a text argument no check on the content are performed 
                     elif flag["type"] == "text":
                         flag["value"] = args[i+1]
                         i = i + 2
@@ -86,6 +98,19 @@ class InputManager():
 
 
     def add_arg(self, name, type_, description = ""):
+        """
+        Add an argument to the input manager. 
+        Possible types are:
+        flag, list, path, dir and text
+        * flag : a boolean value
+        * path : a valid and existing path
+        * dir : a valid and existing directory
+        * text : a non checked value
+        * list : a sequence of non checked values
+
+        description is the message that will be printed in the help associated to 
+        this input manager
+        """
         self.descritptions[name] = description
         self.flags[name] = {
             "type" : type_
@@ -104,6 +129,9 @@ class InputManager():
             raise Exception("non valid flag type " + type_)
 
     def help(self):
+        """
+        print the help message for this input manager (automatically generated)
+        """
         out = ""
         if self.program_description != "":
             out += self.program_description + "\n"

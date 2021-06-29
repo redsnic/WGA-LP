@@ -6,13 +6,13 @@ from WGALP.utils.commandLauncher import run_sp
 from WGALP.step import Step
 
 description = """
-Run quast
+Run quast to asses WGA quality
 """
 input_description = """
-a fasta file of the WGA
+A fasta file resultin from a WGA
 """
 output_description = """
-Html report
+An html report with useful data and a cumulative length plot
 """
 
 ### Wrapper
@@ -26,17 +26,13 @@ def quast(name, rootpath, fasta_file, execution_mode = "on_demand"):
     step.set_description(description, input_description, output_description)
     return step
 
-# Example bash command
-# 
-# fastqc *.trimmed.fastq -t 8 -o fastqc_$directory
+### Runner
 def quast_runner(step, args):
     """
-    run checkM on a fasta file
     input: 
-    {
-        "fasta_file" (full path)
-    }
-    :param args: a dictionary of the arguments
+        fasta_file : path
+    output: 
+        quast_report_html : quast report
     """
     f1 = args["fasta_file"]
 

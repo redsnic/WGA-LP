@@ -5,9 +5,9 @@ account: redsnic
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 4274271
-bundleId: 4764237
+bundleId: 4765469
 url: https://redsnic.shinyapps.io/ContigCoverageVisualizer/
-when: 1624881660.94509
-lastSyncTime: 1624881660.94511
+when: 1624901762.30841
+lastSyncTime: 1624901762.30844
 asMultiple: FALSE
 asStatic: FALSE

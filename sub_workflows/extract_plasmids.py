@@ -1,18 +1,10 @@
 from WGALP.workflow import Workflow
-
 from WGALP.blocks.BWA import BWA
 from WGALP.blocks.samtools_VSI import samtools_VSI
 from WGALP.blocks.recycler import recycler
 from WGALP.blocks.bwa_index import bwa_index
 
-
-#    args_dict = {
-#        "fastq_fwd" : fastq_fwd, 
-#        "fastq_rev" : fastq_rev, 
-#        "contigs" : contigs,
-#        "assembly_graph" : assembly_graph,
-#        "kmer_length" : kmer_length
-#    }
+# prepare the steps necessary to correctly run recycler
 
 class Recycler(Workflow):
     

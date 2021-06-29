@@ -12,7 +12,7 @@ input_description = """
 a fasta file to be indexed
 """
 output_description = """
-nothing
+No output is necessary, index files are created in the same folder of the input file
 """
 
 ### Wrapper
@@ -32,10 +32,9 @@ def bwa_index_runner(step, args):
     """
     run bwa index on a fasta file
     input:
-    {
-        "fasta" (full path)
-    }
-    :param args: a dictionary of the arguments
+        fasta : path
+    output:
+        None
     """
 
     f1 = args["fasta"]

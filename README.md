@@ -24,6 +24,7 @@ This pipeline relies on many external tools that must be installed in order to r
 * **samtools**: manage `.sam` and `.bam` files
 * **SPAdes**: a more complex assembler for bacterial genomes
 * **TrimmomaticPE**: tool to clean `.fastq` reads
+* **checkM**, **merqury** and **quast**: tools to evaluate WGA quality
 
 ## Coping with java tools
 

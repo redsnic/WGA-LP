@@ -7,13 +7,13 @@ from WGALP.step import Step
 from WGALP.tools.filter_fastq import filter_fastq_reads
 
 description = """
-compute the difference between the sets of reads of a fastq and a bam files
+compute the difference between the sets of reads contained in a fastq and a bam files
 """
 input_description = """
 a fastq and a bam files
 """
 output_description = """
-the filtered fastq
+the reads resulting from the set difference (in fastq)
 """
 
 ### Wrapper
@@ -32,14 +32,12 @@ def fastq_bam_difference(name, rootpath, fastq, bam, execution_mode = "on_demand
 
 def fastq_bam_difference_runner(step, args):
     """
-    given a fastq and a bam files,
-    compute setdiff(fastq, bam)
     input:
-    {
-        "fastq" (full path)
-        "bam" (full path)
-    } 
-    :param args: a dictionary of the arguments
+        fastq : path
+        bam : path
+        name : text (remeber that SPAdes can't work with same names and different directories!)
+    output:
+        filtered_fastq : the fastq containg the reads resulting from the set difference
     """    
 
     f1 = args["fastq"]

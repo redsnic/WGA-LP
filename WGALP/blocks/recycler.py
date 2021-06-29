@@ -8,13 +8,13 @@ from WGALP.step import Step
 # Run trimming operations with TrimmomaticPE
 
 description = """
-Run Prokka annotation
+Run recycler to extract plasmids
 """
 input_description = """
-a fasta file of contigs
+a fasta file with the WGA contigs
 """
 output_description = """
-the annotated genome (in many formats, .gff will be the default)
+the extracted plasmid in fasta format
 """
 
 ### Wrapper
@@ -30,23 +30,15 @@ def recycler(name, rootpath, realignment, assembly_graph, kmer_length, execution
     step.set_description(description, input_description, output_description)
     return step
 
-# Example bash command:
-#
-# TrimmomaticPE $f1.fastq $f2.fastq \
-#        $f1.trimmed.fastq $f1.discarded.fastq \
-#        $f2.trimmed.fastq $f2.discarded.fastq \
-#        SLIDINGWINDOW:5:20 \
-#        ILLUMINACLIP:TruSeq2-PE.fa:2:30:10
+### Runner
 def recycler_runner(step, args):
     """
-    run recycler for plasmid extraction
     input:
-    {
-        "realignment_to_graph" a bam file representing the alignment of the reads with the assembly
-        "assembly_graph" an assembly graph (usually from SPAdes)
-        "kmer_length" max kmer length used by the aligner (127 for SPAdes)
-    }
-    :param args: a dictionary of the arguments
+        realignment_to_graph : path (a bam file representing the alignment of the reads with the assembly)
+        assembly_graph : path (an assembly graph (usually from SPAdes))
+        kmer_length : number (max kmer length used by the aligner (127 for SPAdes))
+    ouptut:
+        plasmid_fasta : a fasta containing the extracted plasmids
     """
     f1 = args["realignment_to_graph"]
     f2 = args["assembly_graph"]

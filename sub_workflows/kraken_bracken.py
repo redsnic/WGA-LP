@@ -1,9 +1,13 @@
 from WGALP.workflow import Workflow
-
 from WGALP.blocks.kraken import kraken
 from WGALP.blocks.bracken import bracken
 from WGALP.blocks.load_krakendb_ramdisk import load_krakendb_ramdisk
 from WGALP.blocks.unload_krakendb_ramdisk import unload_krakendb_ramdisk
+
+# this workflow is not currently in use, but is useful to run kraken and bracken efficiently  
+# on a group of inputs without having to manually load/unload the kraken db 
+
+# --- wrapper
 
 def run_kraken(rootpath, prefix, kraken_db, memory_mapped, fastq_fwd = None, fastq_rev = None):
     kraken_step = kraken(prefix + "kraken", rootpath, kraken_db, memory_mapped, fastq_fwd, fastq_rev)    
@@ -12,12 +16,14 @@ def run_kraken(rootpath, prefix, kraken_db, memory_mapped, fastq_fwd = None, fas
     kraken_step.delete_key("kraken_log") 
     bracken_step.delete_key("bracken_log")
 
+# --- create Workflow object
+
 class KrakenBracken(Workflow):
     
     def task(self, args_dict):
         
-        # args_dict["prefix"] is the prefix of the output folder
-        input_fastqs = args_dict["input_fastq"] # list of dictionaries with keys "fastq_fwd", "fastq_rev", "root" {available by default when using a workflow}
+        # list of dictionaries with keys "fastq_fwd", "fastq_rev", "root" {available by default when using a workflow}
+        input_fastqs = args_dict["input_fastq"] 
         karaken_db_on_disk_location = args_dict["kraken_db"]
         
         ramdisk_load_step = load_krakendb_ramdisk("kraken_ramdisk", self.root, karaken_db_on_disk_location, execution_mode="force")

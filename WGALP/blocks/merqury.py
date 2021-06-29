@@ -8,13 +8,13 @@ from WGALP.utils.genericUtils import *
 from WGALP.step import Step
 
 description = """
-Run merqury
+Run merqury to asses WGA quality
 """
 input_description = """
 the original fastq files and an assembly
 """
 output_description = """
-quality reports are availle in the output folder
+quality reports and plots that will be available in the output folder
 """
 
 ### Wrapper
@@ -35,20 +35,20 @@ def merqury(name, rootpath, reference, fastq1, fastq2, kmer=16, execution_mode =
 ### Runner
 def merqury_runner(step, args):
     """
-    run merqury
     input:
-    {
-        "assembly" (.fasta)
-        "fastq1" 
-        "fastq2"  
-    }
-    :param args: a dictionary of the arguments
+        assembly : path (.fasta)
+        fastq1 : path
+        fastq2 : path
+        kmer : number (kmer length used by the assembler)
+    output:
+        merqury_output_dir : just a link to the output folder 
     """
     assembly = args["assembly"]
     f1 = args["fastq1"]
     f2 = args["fastq2"]
     k = str(args["kmer"])
     
+    # running merqury requires to run meryl
     command = "mkdir " + os.path.join(step.outpath, "maryl") + " ; cd " + os.path.join(step.outpath, "maryl") + " && "
     command += "meryl k=" + k + " count output " + os.path.join(step.outpath, "FWD.maryl") + " " + f1 + " && "
     command += "meryl k=" + k + " count output " + os.path.join(step.outpath, "REV.maryl") + " " + f2 + " && "

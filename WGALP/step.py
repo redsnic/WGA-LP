@@ -1,10 +1,17 @@
-# class to cope with the basic building blocks of a pipeline.
-
 import os
 import shutil
 from WGALP.utils.genericUtils import get_files_recursively
- 
+
 class Step():
+    """
+    this class helps to create basic building blocks for a pipeline.
+    Every task is associated with a specific directory, that helps to keep track of the workflow.
+    These blocks may have different execution modes:
+    * on_demand: execute this block only if it was never computed (the folder associated to it does not exist)
+    * force: execute the block even if there is already a folder for that task
+    * read: only prepare a dictionary with the expected results
+    Using the output dictionaries, it is possible to easily connect different stepss to create pipelines.
+    """
 
     def __init__(self, name, rootpath, execution_mode = "on_demand"):
         """

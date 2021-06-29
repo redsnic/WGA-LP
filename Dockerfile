@@ -120,6 +120,7 @@ apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB
 add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/' &&\
 apt update &&\
 apt install -y r-base &&\
+apt install -y libssl-dev libxml2-dev libcurl4-openssl-dev &&\
 echo -e 'install.packages("argparse")\ninstall.packages("ggplot2")\ninstall.packages("scales")\ninstall.packages("tidyverse")\nq()' | R --no-save 
 
 
@@ -159,8 +160,8 @@ tar -xvf minikraken2_db.tgz --one-top-level=kraken_db --strip-components 1
 VOLUME /root/shared
 
 # docker commands:
-# docker build -t wgalp:0.1 .
-# docker run -v /your/path/to/data:/root/shared -itd wgalp:0.1 --name wgalp
+# docker build -t wgalp:0.99 .
+# docker run -v /your/path/to/data:/root/shared -itd wgalp:0.99 --name wgalp
 # docker exec -it wgalp /bin/bash
 
 

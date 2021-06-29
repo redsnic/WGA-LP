@@ -6,7 +6,7 @@ from WGALP.utils.commandLauncher import run_sp
 from WGALP.step import Step
 
 description = """ 
-Run bazam
+Run bazam to convert .bam file back to fastq format
 """
 input_description = """
 an indexed bam file
@@ -29,13 +29,11 @@ def bazam(name, rootpath, bamfile, execution_mode = "on_demand"):
 ### Runner
 def bazam_runner(step, args):
     """
-    run bazam to convert .bam file back to fastq format
     input:
-    {
-        "input_bam" (full path, must be indexed!)
-        (aux) "outfile_name"
-    }
-    :param args: a dictionary of the arguments
+        input_bam : path (bam must be indexed)
+        (aux) outfile_name : string
+    output:
+        fastqfile : path
     """
 
     f1 = args["input_bam"]

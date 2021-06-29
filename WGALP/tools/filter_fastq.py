@@ -1,6 +1,5 @@
 from WGALP.utils.genericUtils import binary_search
 
-
 def make_read_set(fastq_files, output_path):
     """
     create a non redundant set of the reads IDs from a set of fastq files 

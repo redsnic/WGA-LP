@@ -11,10 +11,10 @@ description = """
 Compute coverage statistics using an R script
 """
 input_description = """
-.depth file
+A .depth file resulting from samtools depth 
 """
 output_description = """
-plots in png format
+A folder containing plots in .png format
 """
 
 ### Wrapper
@@ -32,14 +32,12 @@ def view(name, rootpath, depthfile, nodes, pick_all=False, execution_mode="force
 
 def view_runner(step, args):
     """
-    run recycler for plasmid extraction
     input:
-    {
-        "depthfile"
-        "nodes" 
-        "mode"
-    }
-    :param args: a dictionary of the arguments
+        depthfile : path (.depth file)
+        nodes :  text list (a list of node IDs)
+        mode : text (currently view or view-all)
+    output:
+        output_dir : just a link to the output directory
     """
     f1 = args["depthfile"]
     mode = args["mode"]

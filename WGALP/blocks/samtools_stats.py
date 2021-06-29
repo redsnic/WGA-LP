@@ -11,10 +11,10 @@ description = """
 Run samtools stats and plot-bamstats
 """
 input_description = """
-a sam file
+a sam file of an alignmente
 """
 output_description = """
-sam file stats and plots
+reports with sam file statistics and plots
 """
 
 def samtools_stats(name, rootpath, samfile, execution_mode = "on_demand"):
@@ -29,12 +29,11 @@ def samtools_stats(name, rootpath, samfile, execution_mode = "on_demand"):
 
 def samtools_stats_runner(step, args):
     """
-    run samtools stats plus plot-bamstats
     input:
-    {
-        "input_sam" (full path)
-    }
-    :param args: a dictionary of the arguments
+        input_sam : path
+    output:
+        html_report : plot-bamstats html report
+        txt_report : textual report of samtools stats
     """
 
     f1 = args["input_sam"]

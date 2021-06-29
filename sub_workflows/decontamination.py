@@ -1,17 +1,27 @@
 import os
 from hashlib import md5 
 from WGALP.workflow import Workflow
-
 from WGALP.blocks.BWA import BWA
 from WGALP.blocks.samtools_VSI import samtools_VSI
 from WGALP.blocks.bazam import bazam
 from WGALP.blocks.fastq_bam_difference import fastq_bam_difference
-
 from WGALP.tools.filter_fastq import filter_fastq_reads 
 from WGALP.tools.filter_fastq import make_read_set
 
 def smd5(s):
+    """
+    create an hash for a certain string s and return it as a string
+    """
     return md5(s.encode()).hexdigest()
+
+# The decontamination algorithm works as follows:
+# 
+# given a set of references for the target (R) and a set of references for the contaminant (C)
+# 1 - find all the reads that map to at least to a reference in C
+# 2 - of these reads, find the ones that also maps to a reference in R and remove them from the set
+#
+# step 2 is done gradually to avoid remapping already discarded reads
+# the output folder also contains files with the discarded reads
 
 def decontamination(rootpath, references, contaminants, fastq):
 
@@ -144,6 +154,7 @@ def decontaminationPE(rootpath, references, contaminants, fastq_fwd, fastq_rev):
 
     return { "cleaned_fastq_fwd" : out_fastq_fwd, "cleaned_fastq_rev" : out_fastq_rev }
 
+# --- prepare workflow object
 
 class Decontamination(Workflow):
     

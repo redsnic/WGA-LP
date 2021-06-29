@@ -12,7 +12,7 @@ from WGALP.blocks.fastq_bam_difference import filter_fastq_reads
 # --- input arguments
 
 def prepare_input(args):
-    input_data = InputManager("Select only listed reads from a Whole Genom Assembly")
+    input_data = InputManager("Select reads from a fastq file by ID")
     input_data.add_arg("--fastq", "path", description="fastq reads to be filtered (.fastq)")
     input_data.add_arg("--fastq-fwd", "path", description="fastq reads to be filtered FWD (Paired end mode) (.fastq)")
     input_data.add_arg("--fastq-rev", "path", description="fastq reads to be filtered REV (Paired end mode) (.fastq)")

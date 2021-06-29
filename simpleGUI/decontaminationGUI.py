@@ -5,8 +5,9 @@ import subprocess
 from mini_programs.decontamination_workflow import run_decontaminationPE
 from mini_programs.decontamination_workflow import run_decontamination
 
+# Minimal GUI to run decontamination using BWA
+
 if __name__ == "__main__":
-    # Very basic window.  Return values using auto numbered keys
 
     layout = [
         [sg.Text('Press START to initiate the decontamination process')],
@@ -34,7 +35,6 @@ if __name__ == "__main__":
         [sg.Text('bwa index path/to/the/reference.fasta')],
         [sg.Button("START"), sg.Button("QUIT")]
     ]
-
 
     window = sg.Window('Decontaminate FASTQ files', layout)
     while True:

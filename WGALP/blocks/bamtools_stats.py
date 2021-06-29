@@ -6,13 +6,13 @@ from WGALP.utils.commandLauncher import run_sp
 from WGALP.step import Step
 
 description = """
-Run bamtools stats 
+Run bamtools stats tool
 """
 input_description = """
-a bam file
+a bam file, representing an alignment
 """
 output_description = """
-bam file stats 
+a summary, containing some statistics about the alignment 
 """
 
 ### Wrapper
@@ -28,13 +28,11 @@ def bamtools_stats(name, rootpath, bamfile, execution_mode = "on_demand"):
 
 ### Runner
 def bamtools_stats_runner(step, args):
-    """
-    run bamtools stats 
+    """ 
     input:
-    {
-        "input_bam" (full path)
-    }
-    :param args: a dictionary of the arguments
+        input_bam : path
+    output:
+        txt_report : path
     """
 
     f1 = args["input_bam"]

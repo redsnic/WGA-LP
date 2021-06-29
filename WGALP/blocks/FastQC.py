@@ -7,13 +7,13 @@ from WGALP.utils.commandLauncher import run_sp
 from WGALP.step import Step
 
 description = """
-Run FastQC
+Run FastQC for fastq quality control
 """
 input_description = """
-a fastq file of reads
+A fastq file of reads
 """
 output_description = """
-an html report with quality control
+An html report with quality control results
 """
 
 ### Wrapper
@@ -32,13 +32,11 @@ def FastQC(name, rootpath, fastq_file, execution_mode = "on_demand"):
 # fastqc *.trimmed.fastq -t 8 -o fastqc_$directory
 def FastQC_runner(step, args):
     """
-    run fastQC on a fastq file
     input: 
-    {
-        "fastq_file" (full path)
-        (aux) "n_threads"  
-    }
-    :param args: a dictionary of the arguments
+        fastq_file : path
+        (aux) n_threads : number of threads to be used (default: use all available threads) 
+    output:
+        html_report : a report of the quality with many useful plots
     """
     f1 = args["fastq_file"]
 

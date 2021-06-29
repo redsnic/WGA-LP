@@ -8,13 +8,13 @@ from WGALP.utils.genericUtils import *
 from WGALP.step import Step
 
 description = """
-Run minia"
+Run minia whole genome assembler
 """
 input_description = """
-a paired end pair of fastq files (or a single one)
+one or two fastq files, dependently of the choosen mode (single or PE), and the length of the kmer to be used
 """
 output_description = """
-the assembler results
+the assembled genome
 """
 
 ### Wrapper
@@ -37,12 +37,11 @@ def minia_runner(step, args):
     """
     run sades on a pair of .fastq files
     input:
-    {
-        "kmer_size" size of the kmer for the assembler
-        "fastq_fwd" (full path) (it seems that these must have different filenames ...)
-        "fastq_rev" (full path) 
-    }
-    :param args: a dictionary of the arguments
+        kmer_size : number (the size of the kmer to be used by the assembler)
+        fastq_fwd : path 
+        fastq_rev : path (check if these must have different filenames ...)  
+    output:
+        contigs : the WGA assembly created by minia
     """
     f1 = args["fastq_fwd"]
     f2 = args["fastq_rev"]

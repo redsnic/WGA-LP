@@ -1,7 +1,5 @@
-# simple util to run a command line program
+# simple util to run command line program from steps
 import subprocess
-import os
-import stat 
 
 def run_sp(step, cmd):
     """
@@ -13,7 +11,7 @@ def run_sp(step, cmd):
         subprocess.run(cmd, shell=True, check=True, executable="/bin/bash")
     except Exception as excp:
         try:
-            # delete last step's folder
+            # delete last step's folder in case of failure
             step.delete()
         except:
             pass

@@ -1,7 +1,8 @@
 from WGALP.workflow import Workflow
-
 from WGALP.blocks.FastQC import FastQC
 from WGALP.blocks.TrimmomaticPE import TrimmomaticPE
+
+# prepare the step necessary to trim fastq files and to asses their quality
 
 class TrimFastq(Workflow):
     

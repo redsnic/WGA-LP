@@ -8,13 +8,13 @@ from WGALP.step import Step
 
 
 description = """
-unload kraken_db ramdisk
+remove kraken2 database ramdisk
 """
 input_description = """
-...
+mounting point of kraken2 database's ramsdisk
 """
 output_description = """
-...
+No output
 """
 
 ### Wrapper
@@ -33,16 +33,14 @@ def unload_krakendb_ramdisk_runner(step, args):
     """
     unload the krakendb ramdisk
     [better to be run with "force"]
-    The output folder of this step has no use and can be deleted
+    The output folder of this step has no use and can be safely deleted
     input:
-    {
-        "kraken_ramdisk" (full path)
-    }
-    :param args: a dictionary of the arguments
+        kraken_ramdisk : path
+    output:
+        None
     """
     ramdisk_path = args["kraken_ramdisk"]
 
-    # this command works with minikraken db, change ramdisk size if needed...
     command  = "sudo umount " + ramdisk_path
 
     # note that this command requies to be root (may prompt to get a password)

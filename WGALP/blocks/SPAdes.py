@@ -6,13 +6,13 @@ from WGALP.utils.genericUtils import *
 from WGALP.step import Step
 
 description = """
-Run SPAdes"
+Run SPAdes whole genome assembler
 """
 input_description = """
-a paired end pair of fastq files
+A paired end pair of fastq files
 """
 output_description = """
-the contigs or scaffolds of the assembled genome
+The contigs and scaffolds of the assembled genome
 """
 
 ### Wrapper
@@ -31,16 +31,17 @@ def SPAdes(name, rootpath, fastq_fwd, fastq_rev, plasmid = False, execution_mode
 # Example bash command
 #
 # spades.py -1 $f1.trimmed.fastq -2 $f2.trimmed.fastq -o spades_out_$directory/ --careful 
+### Runner
 def SPAdes_runner(step, args):
     """
-    run sades on a pair of .fastq files
     input:
-    {
-        "fastq_fwd" (full path) (it seems that these must have different filenames ...)
-        "fastq_rev" (full path)
-        "plasmid" (boolean)   
-    }
-    :param args: a dictionary of the arguments
+        fastq_fwd : path 
+        fastq_rev : path (fastq_fwd and fastq_rev must have different filenames ...)
+        plasmid : flag (run plasmid extraction)   
+    output:
+        contigs : SPAdes generated contigs
+        scaffolds : SPAdes generated scaffolds (links contigs using paired end reads)
+        assembly_graphs : SPAdes assembly graph
     """
     f1 = args["fastq_fwd"]
     f2 = args["fastq_rev"]

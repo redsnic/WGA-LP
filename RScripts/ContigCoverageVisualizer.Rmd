@@ -14,6 +14,7 @@ library(DT)
 library(ggraph)
 library(neighbr)
 library(plotly)
+library(rclipboard)
 
 ### reactive variables declaration
 
@@ -28,6 +29,7 @@ rv$Kmeans2D <- NULL
 rv$mixture <- NULL
 rv$custom <- NULL
 rv$set_dataset <- FALSE
+rv$clip_str <- ""
 
 # load .summary dataset
 load_dataset <- function(){
@@ -41,6 +43,8 @@ load_dataset <- function(){
     rv$set_dataset <- TRUE
   })
 }
+
+
 
 ALPHA_VALUE <- 0.7
 ```
@@ -248,13 +252,28 @@ reactive({
 
 ### Selected nodes
 
+<div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js"></script>
+</div>
+
+These nodes are taken from the **Custom** selection only. Copy the following lines into a file to filter the nodes with `filter_fasta.py` script (`wgalp filter-fasta` command).
+
 ```{r}
-renderPrint({
-  rv$dataset %>% filter(Coverage>=input$boundary) %>% pull(Name) %>% paste(collapse="\n") %>% cat
+renderUI({
+  rclipButton("clipbtn", "Click here to copy the selected node names to the clipboard", rv$clip_str, icon("clipboard"))
 })
 ```
 
-Copy these lines into a file to filter the nodes with `filter_fasta.py` script.
+---
+
+List of the selected nodes
+
+```{r}
+renderPrint({
+  rv$clip_str <- rv$dataset %>% filter(Coverage>=input$boundary) %>% pull(Name) %>% paste(collapse="\n")
+  rv$clip_str %>% cat
+})
+```
 
 ### After selection
 
