@@ -12,7 +12,7 @@ compute.eggnog.letter.frequency <- function(df){
     # - split letter categories in vectors 
     df <- df %>% mutate(COG_catlis = map(COG_category, ~ strsplit(.,"")[[1]]))
     # - get the list of possible letter categories
-    descriptors <- df %>% pull(COG_catlis) %>% unlist %>% unique
+    descriptors <- strsplit("JAKLBDYVTMNZWUOCGEFHIPQRS","")[[1]]
     # - prepare the columns associated to the specific letter categories
     out <- list()
     out[["name"]] <- df$`#query`
@@ -26,7 +26,18 @@ compute.eggnog.letter.frequency <- function(df){
         filter(value == TRUE) %>% group_by(descriptor) %>%
         count() %>% 
         mutate(descriptor = strsplit(descriptor, "")[[1]][2])
-    out.df
+    vals <- list()
+    for(d in descriptors){
+        df. <- out.df %>% filter(descriptor == !!d)
+        if(nrow(df.) == 1){
+            vals[[d]] <- df.[[1,2]]
+        }else{
+            vals[[d]] <- 0.
+        }
+    }
+    nam <- names(vals)
+    val <- unlist(vals)
+    data.frame(descriptor = nam, count = val)
 }
 
 ## --- MAIN
