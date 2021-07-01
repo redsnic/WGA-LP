@@ -1,0 +1,64 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+df <- read_tsv("/home/redsnic/Scaricati/MM_fwfwebc2.emapper.annotations.tsv", comment = "##")
+```
+
+
+```{r}
+df
+```
+
+
+
+```{r}
+ggplot(df)+
+    geom_bar(aes(x=COG_category)) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+```{r}
+df <- df %>% mutate(COG_catlis = map(COG_category, ~ strsplit(.,"")[[1]]))
+```
+
+
+```{r}
+descriptors <- df %>% pull(COG_catlis) %>% unlist %>% unique
+
+out <- list()
+out[["name"]] <- df$`#query`
+for (d in descriptors) {
+    out[[paste(".", d, sep="")]] <- map_lgl(df$COG_catlis, ~ d %in% .)
+}
+out.df <- as.data.frame(out)
+
+out.df
+```
+
+```{r}
+out.df %>% pivot_longer(starts_with("."), names_to = "descriptor", values_to = "value") %>% filter(value == TRUE) %>% ggplot() +
+    geom_bar(aes(x="", fill=descriptor)) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+    coord_polar("y", start=0)
+```
+
+```{r}
+out.df %>% pivot_longer(starts_with("."), names_to = "descriptor", values_to = "value") %>% filter(value == TRUE) %>% ggplot() +
+    geom_bar(aes(x=descriptor)) +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
+```
+
+```{r}
+out.df %>% pivot_longer(starts_with("."), names_to = "descriptor", values_to = "value") %>% filter(value == TRUE) %>% group_by(descriptor) %>% count() %>% 
+    mutate(descriptor = strsplit(descriptor, "")[[1]][2])
+```
+
+
+

@@ -116,11 +116,11 @@ git clone 'https://github.com/redsnic/WGA-LP.git'
 # --- install R
 RUN cd root && \
 apt-get install -y software-properties-common && apt update &&\
-apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 &&\
-add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/' &&\
-apt update &&\
-apt install -y r-base &&\
-apt install -y libssl-dev libxml2-dev libcurl4-openssl-dev &&\
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9 && \
+add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran40/' && \
+apt update && \
+apt install -y r-base && \
+apt install -y libssl-dev libxml2-dev libcurl4-openssl-dev && \
 echo -e 'install.packages("argparse")\ninstall.packages("ggplot2")\ninstall.packages("scales")\ninstall.packages("tidyverse")\nq()' | R --no-save 
 
 
@@ -131,7 +131,7 @@ rm *.tar.*
 
 # --- configure WGA-LP
 RUN cd root && \
-cd git/WGA-LP &&\
+cd git/WGA-LP && \
 # inside git/WGA-LP
 # configure bazam and mauve
 mauve=/root/downloads/mauve/Mauve.jar &&\
@@ -141,6 +141,7 @@ chmod 775 /usr/local/bin/bazam &&\
 echo "java -Xmx500m -cp $mauve org.gel.mauve.contigs.ContigOrderer \$@" > /usr/local/bin/mauveContigOrderer &&\
 chmod 775 /usr/local/bin/mauveContigOrderer &&\
 # install WGA-LP
+pip3 install pandas &&\
 pip3 install . &&\
 # add wgalp.py to the path
 chmod 775 /root/git/WGA-LP/wgalp.py &&\
@@ -150,18 +151,21 @@ ln -s /root/git/WGA-LP/wgalp.py /usr/local/bin/wgalp
 # --- donwload and setup kraken_db
 # if you want to download the mini-kraken package directly uncomment the following:
 #
-RUN cd root && \
-wget 'ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/old/minikraken2_v1_8GB_201904.tgz' -O minikraken2_db.tgz &&\
-tar -xvf minikraken2_db.tgz --one-top-level=kraken_db --strip-components 1 
+# RUN cd root && \
+# wget 'ftp://ftp.ccb.jhu.edu/pub/data/kraken2_dbs/old/minikraken2_v1_8GB_201904.tgz' -O minikraken2_db.tgz &&\
+# tar -xvf minikraken2_db.tgz --one-top-level=kraken_db --strip-components 1 
 #
 # this line is used to instead to copy the db from the build folder, consider editing it
-# COPY kraken_db /root/kraken_db
+COPY kraken_db /root/kraken_db
+
+# prepare .bashrc
+COPY docker_bashrc.sh /root/.bashrc
 
 VOLUME /root/shared
 
 # docker commands:
 # docker build -t wgalp:0.99 .
-# docker run -v /your/path/to/data:/root/shared -itd wgalp:0.99 --name wgalp
+# docker run --name wgalp -v /your/path/to/data:/root/shared -itd wgalp:0.99
 # docker exec -it wgalp /bin/bash
 
 

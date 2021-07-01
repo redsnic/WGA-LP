@@ -1,16 +1,29 @@
 # WGA-LP
 
-This project specifies a tool to build pipelines concatenating bash and python code. 
-Included in this repo is the implementation of a pipeline for Whole Genome Assembly, 
-made specifically for Lactobacilli, that operates on raw `.fastq` files to produce
-the annotated contigs of the assembled genomes.  
+WGA-LP is a pipeline for whole genome assembly that 
+simplifies the usage of different tools and helps the 
+user in evaluating his results.
 
-## Pre-requirements
+This pipeline also includes tools to expand the analysis
+by including interfaces to other software.
 
-> WGA-LP requires a system that can run `bash` scripts. To analyse 
-  the Lactobacilli data, at least 10GB of available RAM is required.
+WGA-LP was built to operate directly from raw `.fastq` files 
+and was originally used to analyze the genome 
+of a set Lactobacilli (hence the L in the acronym)
 
-This pipeline relies on many external tools that must be installed in order to run the analysis:
+## Installation
+
+The best way to install WGA-LP is through [docker](https://www.docker.com/).
+The **wgalp image** is available [here](https://hub.docker.com/repository/docker/redsnic/wgalp) and includes all the 
+software and databases required for the analysis. 
+
+The image is intended to be used with `docker exec` and
+provides a bash shell ready for use. Further information 
+is available on the docker hub page of wgalp. 
+
+## Pipeline external tools
+
+This pipeline relies on many external tools that provide some of the core functionalities of WGA-LP:
 
 * **bamtools**: manage `.bam` files
 * **bazam**: convert `.bam` files back to `.fastq` 
@@ -21,103 +34,78 @@ This pipeline relies on many external tools that must be installed in order to r
 * **mauve**: program for multiple alignment, used to reorder contigs
 * **minia**: a simple assembler for bacterial genomes
 * **prokka**: annotate assembled genomes from bacteria 
-* **samtools**: manage `.sam` and `.bam` files
+* **samtools** and **plot-bamstats**: manage `.sam` and `.bam` files, create reports
 * **SPAdes**: a more complex assembler for bacterial genomes
 * **TrimmomaticPE**: tool to clean `.fastq` reads
 * **checkM**, **merqury** and **quast**: tools to evaluate WGA quality
 
-## Coping with java tools
+All these tools are freely available for installation. 
 
-**Mauve** and **Bazam** are implemented in `java` and are available in the form of `.jar` files. To let the pipeline
-know their location it is required that they are added to the execution path: 
+## Re-running the pipeline
 
-### Manual approach
+WGA-LP pipeline is organized to keep track of the analysis in order to avoid running successful steps multiple times.
+The execution is divided in sub-programs that are composed of multiple steps. To rerun a specific step it is necessary 
+to delete its folder from the output directory (of a specific sample). 
 
-```
-# skip these commands if you already have a valid folder in the path that you want to use
-# create a bin folder in the home directory and add it to the path
-mkdir $HOME/bin
-export PATH=$PATH:$HOME/bin
-# if you want to add that folder also to .bashrc run also
-echo "export PATH=$PATH:$HOME/bin" >> $HOME/.bashrc
-```
+For example to re run trimming, delete `TrimmomaticPE` folder file inside the output directory of the choosen sample.
 
-Then add bash script to run the .jar files to that folder 
+## Launching the execution 
 
-```
-folder=$HOME/bin # or another folder in your path
-sudo echo "java -jar /your/path/to/bazam.jar \$@" > $folder/bazam && sudo chmod 775 $folder/bazam
-sudo echo "java -Xmx500m -cp /your/path/to/Mauve.jar org.gel.mauve.contigs.ContigOrderer \$@" > $folder/mauveContigOrderer && sudo chmod 775 $folder/mauveContigOrderer
-```
+to run the pipeline, execute `wgalp` with `python3`.
+This will show a list of all the possible tools available 
+for the analysis. Executing `wgalp <program_name>` will 
+provide further information on the specific sub program and
+its usage.
 
-### Assisted approach
-
-to simplify this process, you can use the `configure.sh` script in this way:
+For reference, this is the help message of wgalp:
 
 ```
-bash configure.sh /path/to/newPathFolder /path/to/bazam.jar /path/to/Mauve.jar
-```
-add this line to your `.bashrc` if you don't want to repeat this process for each terminal session:
+This programs is an helper to run the sub procedures of wgalp
+usage: wgalp <program> [args]
 
-```
-export PATH=$PATH:/path/to/newPathFolder
+the following is a list of all the available programs:
+        trim : trim reads and/or assess contaminations with kraken2
+        decontaminate : remove reads mapping to a contaminant non ambiguosly
+        assemble : assemble reads into scaffolds or contigs
+        check-coverage : compute coverage statistics of an assembled genome
+        view-nodes : compute coverage plots for specific nodes of a whole genome assembly       reorder : reorder a whole genome assembly using a reference genome
+        filter-assembly : select contigs by ID
+                          (to be used with the webapp: https://redsnic.shinyapps.io/ContigCoverageVisualizer/)
+        annotate : run prokka annotation with NCBI standard
+        plasmid : extract putative plasmids using recycler
+        quality : evaluate assembly quality using checkM, merqury and quast
+        understand-origin : runs kraken2 in selection mode
+        kdb-load : pre-load kraken2 database in RAM, so that you dont have to load it multiple times (use --memory-mapped option when possible)
+        kdb-unload : remove loaded kraken2 db from RAM
+        filter-fastq : select reads from a fastq file
+        help : show this message (equivalent to --help or -h)
+
+Run wgalp <program> --help for specific information about the selected program.
 ```
 
-## Installation
+## Manual installation
 
-To install the package run the following commands 
+If you, for some reason, want to install all the dependencies for WGA-LP 
+manually, avoiding docker, please refer to the commands 
+in the Dockerfile, as those are the instructions to install 
+WGA-LP on Ubuntu 18.04 LTS. WGA-LP can only be installed on
+**Linux** machines and with the **bash shell** available.
+
+### Updating and installing WGA-LP 
+
+To install the python package associated to the pipeline, run the following commands:
 
 ```
 # clone this Git repository:
 git clone https://github.com/redsnic/WGA-LP.git
 # move in the WGA-LP folder:
 cd WGA-LP
-# install the package using pip (if you don't have pip use pip3)
-pip install . 
+# install the package using pip3
+pip3 install . 
 ```
 
-see the last section to see how to actually launch the execution.
-
-## Re-running the pipeline
-
-WGA-LP pipeline is organized to keep track of the analysis in order to avoid running successful steps multiple times.
-The execution is divided in sub-workflows that are composed of multiple steps. To rerun a specific step it is necessary 
-to delete its folder from the output directory (of a specific sample) and to delete the `.checkpoint` file associated
-to the current sub-workflow. 
-
-For example to re run trimming, delete `TrimmomaticPE` folder and `fastq_trimming.checkpoint` file inside the output 
-directory of the choosen sample.
-
-## Managing the auxiliary data
-
-To run the pipeline, it is required to provide `.tsv` tables like te ones in the `aux_data` folder. 
-
-`samples_metadata` associates Folder (an identifier for the sample, the name of the folder in wich the raw reads are) and Organism (the name of the organism as
-reported by kraken2). 
-
-`reference_location` associates a Reference (that must mach the identifiers in the Organism column of `samples_metadata`) to its Location (a path to the `.fasta` file
-of the reference). 
-
-> look at the examples and modify the `.tsv` files accordingly to match the location of the files on your machine
-
-## Launching the execution 
-
-to run the pipeline, execute `complete_workflow.py` with `python3`: 
+to just upgrade to the last version do (in WGA-LP's directory):
 
 ```
-python3 workflows/complete_workflow.py \ 
-    --output /path/to/existing/output/directory \
-    --ref-table /path/to/samples_metadata.tsv \
-    --ref-location-table /path/to/aux_data/references_location.tsv \
-    --input /path/to/first/folder/with/raw_fastq_files/ /path/to/second/folder/with/raw_fastq_files/ \  # etc... 
-    --kraken-db /path/to/minikraken_db/minikraken2_v1_8GB
+git pull; pip3 instal .;
 ```
-
-explaination of the parameters:
-
-* **output**: this will be the folder which will contain the results of the analysis on the **input** samples (must be already created!)
-* **ref-table**: path to `sample_metadata` tsv file (can have any name, must have Folder and Organism columns)
-* **ref-location-table**: path to `reference_location` tsv file (can have any name, must have Reference and Location columns)
-* **input**: a list of paths to the input folders. A valid input folders contains only the two forward and reverse raw `.fastq` files (that must contain `_R1_` and `_R2_` in their name respectively)
-* **kraken-db**: location of the minikraken db  
-
