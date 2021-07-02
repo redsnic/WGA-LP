@@ -31,7 +31,7 @@ def help():
     out += "\tdecontaminate : remove reads mapping to a contaminant non ambiguosly\n"
     out += "\tassemble : assemble reads into scaffolds or contigs\n"
     out += "\tcheck-coverage : compute coverage statistics of an assembled genome\n"
-    out += "\tview-nodes : compute coverage plots for specific nodes of a whole genome assembly"
+    out += "\tview-nodes : compute coverage plots for specific nodes of a whole genome assembly\n"
     out += "\treorder : reorder a whole genome assembly using a reference genome\n"
     out += "\tfilter-assembly : select contigs by ID\n"
     out += "\t                  (to be used with the webapp: https://redsnic.shinyapps.io/ContigCoverageVisualizer/)\n"
