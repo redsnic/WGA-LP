@@ -73,7 +73,7 @@ def understand_origin(args):
     print("\tlog : " + output["kraken_log"])
     print("check " + output_dir + " for the full kraken output")
     print("you can use the following command to easly extract the nodes:")
-    print("cat " + output["kraken_log"] + " | cut -d$'\t' -f 2,3 | grep <your_taxa>")
+    print("cat " + output["kraken_log"] + " | cut -d$'\\t' -f 2,3 | grep <your_taxa>")
     print("you can use grep -v to extract the elements not matching to a taxa of your choice, for example:")
     print("cat " + output["kraken_log"] + " | cut -d$'\\t' -f 2,3 | grep -v casei")
     return output

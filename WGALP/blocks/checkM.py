@@ -28,9 +28,7 @@ def checkM_lineage(name, rootpath, fasta_file, reduced_tree=True, execution_mode
     step.set_description(description, input_description, output_description)
     return step
 
-# Example bash command
-# 
-# fastqc *.trimmed.fastq -t 8 -o fastqc_$directory
+### Runner
 def checkM_lineage_runner(step, args):
     """
     run checkM on a fasta file

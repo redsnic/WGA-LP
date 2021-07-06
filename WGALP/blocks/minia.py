@@ -30,9 +30,7 @@ def minia(name, rootpath, kmer_size, fastq_fwd, fastq_rev=None, execution_mode =
     step.set_description(description, input_description, output_description)
     return step
 
-# Example bash command
-#
-# spades.py -1 $f1.trimmed.fastq -2 $f2.trimmed.fastq -o spades_out_$directory/ --careful 
+### Runner
 def minia_runner(step, args):
     """
     run sades on a pair of .fastq files

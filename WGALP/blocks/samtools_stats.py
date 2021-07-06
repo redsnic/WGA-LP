@@ -17,6 +17,7 @@ output_description = """
 reports with sam file statistics and plots
 """
 
+### Wrapper
 def samtools_stats(name, rootpath, samfile, execution_mode = "on_demand"):
     step = Step(name, rootpath, execution_mode=execution_mode)
     step.set_command(samtools_stats_runner)
@@ -27,6 +28,7 @@ def samtools_stats(name, rootpath, samfile, execution_mode = "on_demand"):
     step.set_description(description, input_description, output_description)
     return step
 
+### Runner
 def samtools_stats_runner(step, args):
     """
     input:

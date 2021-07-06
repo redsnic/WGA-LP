@@ -27,9 +27,7 @@ def FastQC(name, rootpath, fastq_file, execution_mode = "on_demand"):
     step.set_description(description, input_description, output_description)
     return step
 
-# Example bash command
-# 
-# fastqc *.trimmed.fastq -t 8 -o fastqc_$directory
+### Runner
 def FastQC_runner(step, args):
     """
     input: 
