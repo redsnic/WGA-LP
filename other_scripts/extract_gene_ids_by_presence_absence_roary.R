@@ -7,7 +7,7 @@ if(length(args)!=4){
   infile <- args[2]
   min_genomes <- strtoi(args[3])
   max_genomes <- strtoi(args[4])
-  tab <- read_csv(args[2]) %>% filter(`No. sequences` >= min_genomes & `No. sequences` <= max_genomes) %>%
+  tab <- read_csv(args[2]) %>% filter(`No. isolates` >= min_genomes & `No. isolates` <= max_genomes) %>%
     pull(Gene) %>%
     paste(collapse="\n") %>%
     cat
