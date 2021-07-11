@@ -9,5 +9,6 @@ read_tsv(args[2], comment = "##") %>%
   map(~ strsplit(., ",")[[1]]) %>%
   unlist() %>%
   unique() %>% 
+  map(~ strsplit(., ":")[[1]][2]) %>%
   paste(collapse = "\n") %>% 
   cat()
