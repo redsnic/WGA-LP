@@ -12,7 +12,7 @@ from sub_workflows.extract_plasmids import Recycler
 # --- input arguments
 
 def prepare_input(args):
-    input_data = InputManager("Wrapper to easily run recycler and inferr plasmid from genome assembly graphs")
+    input_data = InputManager("Wrapper to easily run recycler and inferr plasmids from genome assembly graphs")
     input_data.add_arg("--fastq-fwd", "path", description="raw forward reads (.fastq)")
     input_data.add_arg("--fastq-rev", "path", description="raw reverse reads (.fastq)") 
     input_data.add_arg("--contigs", "path", description="assembled contigs (.fasta)") 
