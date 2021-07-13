@@ -21,7 +21,7 @@ def prepare_input(args):
     input_data.add_arg("--assembly", "path", description="WGA assembly to evaluate (.fasta)")
     input_data.add_arg("--output", "dir", description="path to the output folder")
     input_data.add_arg("--output", "dir", description="path to the output folder")
-    input_data.add_arg("--full-tree", "dir", description="use full tree in checkM instead reduced_tree (requires > 40GB of ram)")
+    input_data.add_arg("--full-tree", "flag", description="use full tree in checkM instead reduced_tree (requires > 40GB of ram)")
     input_data.add_arg("--kmer-length", "text", description="kmer size to be used in merqury (use 16 for 3Mpb, check with: $MERQURY/best_k.sh <genome_size>)")
     input_data.parse(args)
     return input_data
