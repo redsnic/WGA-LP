@@ -39,7 +39,7 @@ def krakendb_make_ramdisk_runner(step, args):
     db = args["kraken_db"]
 
     # this command works with minikraken db, change ramdisk size if needed...
-    command  = "sudo mount -t tmpfs -o size=8G tmpfs " + step.outpath + " && "
+    command  = "mount -t tmpfs -o size=8G tmpfs " + step.outpath + " && "
     command += "cp -R " + db + " " + step.outpath + "/kraken_db"
 
     # note that this command requies to be root (may prompt to get a password)

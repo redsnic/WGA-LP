@@ -11,7 +11,7 @@ from WGALP.utils.input_manager import check_folders
 # --- input arguments
 
 def prepare_input(args):
-    input_data = InputManager(program_description="Load kraken-db into RAM, this step is useful when running kraken multiple times.\nRemember to unload the db after use and to use the --memory-mapped flag when supported (otherwise another copy of the db will be loaded).")
+    input_data = InputManager(program_description="Load kraken-db into RAM, this step is useful when running kraken multiple times.\nRemember to unload the db after use and to use the --memory-mapped flag when supported (otherwise another copy of the db will be loaded).\nThis command requires root privileges.")
     input_data.add_arg("--db", "path", description="path to kraken database")
     input_data.add_arg("--mount-point", "text", description="path where the kraken_db will be mounted")
     input_data.parse(args)

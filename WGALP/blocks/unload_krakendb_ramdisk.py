@@ -41,7 +41,7 @@ def unload_krakendb_ramdisk_runner(step, args):
     """
     ramdisk_path = args["kraken_ramdisk"]
 
-    command  = "sudo umount " + ramdisk_path
+    command  = "umount " + ramdisk_path
 
     # note that this command requies to be root (may prompt to get a password)
     if step.execution_mode != "read":
