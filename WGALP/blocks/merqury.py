@@ -49,8 +49,7 @@ def merqury_runner(step, args):
     k = str(args["kmer"])
     
     # running merqury requires to run meryl
-    command = "mkdir " + os.path.join(step.outpath, "maryl") + " ; cd " + os.path.join(step.outpath, "maryl") + " && "
-    command += "meryl k=" + k + " count output " + os.path.join(step.outpath, "FWD.maryl") + " " + f1 + " && "
+    command =  "meryl k=" + k + " count output " + os.path.join(step.outpath, "FWD.maryl") + " " + f1 + " && "
     command += "meryl k=" + k + " count output " + os.path.join(step.outpath, "REV.maryl") + " " + f2 + " && "
     command += "meryl union-sum output " + os.path.join(step.outpath, "UNION.maryl") + " " + os.path.join(step.outpath, "FWD.maryl") + " " + os.path.join(step.outpath, "REV.maryl") + " && "  
     command += "$MERQURY/merqury.sh " + os.path.join(step.outpath, "UNION.maryl") + " " + assembly + " merqury;"
