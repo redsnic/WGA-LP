@@ -26,7 +26,7 @@ def sanity_check(mount_point):
 def kdb_unload_aux(mount_point):
     # sanity check
     sanity_check(mount_point)
-    subprocess.run("sudo umount " + mount_point, shell=True, check=True, executable="/bin/bash")
+    subprocess.run("umount " + mount_point, shell=True, check=True, executable="/bin/bash")
 
 # --- caller function
 
