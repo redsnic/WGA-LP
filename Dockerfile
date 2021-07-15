@@ -2,13 +2,17 @@ FROM ubuntu:18.04
 SHELL ["/bin/bash", "-c"]
 # make tzdata non interactive
 ENV DEBIAN_FRONTEND=noninteractive  
-# prokka
-ENV export PERL5LIB=$CONDA_PREFIX/lib/perl5/site_perl/5.22.0/ 
 # mauve/bazam
 ENV mauve=/root/downloads/mauve/Mauve.jar 
 ENV bazam=/root/downloads/bazam.jar 
+# merqury
 ENV MERQURY=/root/merqury-1.3 
 ENV PATH=$PATH:/root/meryl-1.3/bin:/root/merqury-1.3 
+# recycler
+ENV PATH=$PATH:/root/git/Recycler/bin/
+# prokka
+ENV PATH=$PATH:/root/git/prokka/bin 
+ENV PERL5LIB=$CONDA_PREFIX/lib/perl5/site_perl/5.22.0/
 # krakendb
 ENV kraken_db=/root/kraken_db
 
@@ -59,14 +63,28 @@ apt install -y bwa
 RUN cd root && eval "$(/root/miniconda/bin/conda shell.bash hook)" &&\
 conda install -y -c bioconda kraken2  
 
-
 # --- install MAUVE 
 RUN cd root && \
 cd downloads &&\
 wget -O Mauve.tar.gz 'darlinglab.org/mauve/snapshots/2015/2015-02-13/linux-x64/mauve_linux_snapshot_2015-02-13.tar.gz' &&\
 tar -xvf Mauve.tar.gz --one-top-level=mauve --strip-components 1 &&\
-rm Mauve.tar.gz 
+rm Mauve.tar.gz &&\
+# also add progressive mauve (requirement for other steps)
+apt install mauve-aligner 
 
+## --- install RECYCLER
+RUN cd /root/git/ &&\
+git clone https://github.com/Shamir-Lab/Recycler.git &&\
+cd Recycler &&\
+# install python2 and pip
+apt -y install python-pip &&\
+apt-get install -y python-setuptools &&\
+pip2 install future numpy 'networkx==2.2' &&\
+python2 setup.py install --user &&\
+# fix !# header for python2
+cat ~/git/Recycler/bin/recycle.py | sed 's:env python:env python2:g' > temp &&\
+mv temp ~/git/Recycler/bin/recycle.py &&\
+chmod 775 /root/git/Recycler/bin/* 
 
 # --- install JAVA
 RUN cd root && \
@@ -75,7 +93,10 @@ apt install -y default-jre
 # --- install PROKKA
 RUN cd root && eval "$(/root/miniconda/bin/conda shell.bash hook)" &&\
 apt install -y libdatetime-perl libxml-simple-perl libdigest-md5-perl git default-jre bioperl &&\
-conda install -y -c conda-forge -c bioconda -c defaults prokka 
+conda install -y -c bioconda perl-bioperl &&\
+git clone https://github.com/tseemann/prokka.git /root/git/prokka &&\
+/root/git/prokka/bin/prokka --setupdb &&\
+conda install -y -c bioconda tbl2asn
 
 # --- install TRIMMOMATIC
 RUN cd root && \
@@ -91,11 +112,13 @@ cd downloads &&\
 # inside downloads
 wget https://github.com/ssadedin/bazam/releases/download/1.0.1/bazam.jar -O bazam.jar 
 
-
 # --- install QUAST
-RUN cd root && \
+RUN cd root && eval "$(/root/miniconda/bin/conda shell.bash hook)" &&\
+conda install -c bioconda pplacer &&\
 pip3 install quast &&\
-ln -s /root/miniconda/bin/quast.py /root/miniconda/bin/quast
+# TODO check if needed
+# --- fix cls.parse replacing it with html.parse ---
+ln -s /root/miniconda/bin/quast.py /root/miniconda/bin/quast 
 
 # --- install checkM
 RUN cd root && \

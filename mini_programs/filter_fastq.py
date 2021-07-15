@@ -74,7 +74,7 @@ def select_fastq(args):
 
     print("task completed successfully")
     print("The filtered .fastq is at the following location:")
-    if fastq is None:
+    if not fastq is None:
         print("\t" + "filtered_fastq" + " : " + os.path.join(output_dir, "filtered.fastq"))
         return {"filtered_fastq" : os.path.join(output_dir, "filtered.fastq")}
     else:

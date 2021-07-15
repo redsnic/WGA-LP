@@ -43,16 +43,17 @@ def merqury_runner(step, args):
     output:
         merqury_output_dir : just a link to the output folder 
     """
-    assembly = args["assembly"]
-    f1 = args["fastq1"]
-    f2 = args["fastq2"]
+    assembly = os.path.abspath(args["assembly"])
+    f1 = os.path.abspath(args["fastq1"])
+    f2 = os.path.abspath(args["fastq2"])
     k = str(args["kmer"])
     
     # running merqury requires to run meryl
-    command =  "meryl k=" + k + " count output " + os.path.join(step.outpath, "FWD.maryl") + " " + f1 + " && "
-    command += "meryl k=" + k + " count output " + os.path.join(step.outpath, "REV.maryl") + " " + f2 + " && "
-    command += "meryl union-sum output " + os.path.join(step.outpath, "UNION.maryl") + " " + os.path.join(step.outpath, "FWD.maryl") + " " + os.path.join(step.outpath, "REV.maryl") + " && "  
-    command += "$MERQURY/merqury.sh " + os.path.join(step.outpath, "UNION.maryl") + " " + assembly + " merqury;"
+    command =  "cd " + step.outpath + " && "
+    command += "meryl k=" + k + " count output FWD.maryl " + f1 + " && "
+    command += "meryl k=" + k + " count output REV.maryl " + f2 + " && "
+    command += "meryl union-sum output UNION.maryl FWD.maryl REV.maryl && "  
+    command += "$MERQURY/merqury.sh UNION.maryl " + assembly + " " + os.path.splitext(os.path.basename(assembly))[0] + " ; "
 
     if step.execution_mode != "read":
         run_sp(step, command)
