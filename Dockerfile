@@ -12,7 +12,8 @@ ENV PATH=$PATH:/root/meryl-1.3/bin:/root/merqury-1.3
 ENV PATH=$PATH:/root/git/Recycler/bin/
 # prokka
 ENV PATH=$PATH:/root/git/prokka/bin 
-ENV PERL5LIB=$CONDA_PREFIX/lib/perl5/site_perl/5.22.0/
+# SPAdes
+ENV PATH=$PATH:/root/SPAdes-3.15.2-Linux/bin/
 # krakendb
 ENV kraken_db=/root/kraken_db
 
@@ -70,7 +71,7 @@ wget -O Mauve.tar.gz 'darlinglab.org/mauve/snapshots/2015/2015-02-13/linux-x64/m
 tar -xvf Mauve.tar.gz --one-top-level=mauve --strip-components 1 &&\
 rm Mauve.tar.gz &&\
 # also add progressive mauve (requirement for other steps)
-apt install mauve-aligner 
+apt install -y mauve-aligner 
 
 ## --- install RECYCLER
 RUN cd /root/git/ &&\
@@ -95,6 +96,7 @@ RUN cd root && eval "$(/root/miniconda/bin/conda shell.bash hook)" &&\
 apt install -y libdatetime-perl libxml-simple-perl libdigest-md5-perl git default-jre bioperl &&\
 conda install -y -c bioconda perl-bioperl &&\
 git clone https://github.com/tseemann/prokka.git /root/git/prokka &&\
+export PERL5LIB=$CONDA_PREFIX/lib/perl5/site_perl/5.22.0/ &&\
 /root/git/prokka/bin/prokka --setupdb &&\
 conda install -y -c bioconda tbl2asn
 
@@ -114,10 +116,12 @@ wget https://github.com/ssadedin/bazam/releases/download/1.0.1/bazam.jar -O baza
 
 # --- install QUAST
 RUN cd root && eval "$(/root/miniconda/bin/conda shell.bash hook)" &&\
-conda install -c bioconda pplacer &&\
+conda install -y -c bioconda pplacer &&\
 pip3 install quast &&\
-# TODO check if needed
 # --- fix cls.parse replacing it with html.parse ---
+cat /root/miniconda/lib/python3.8/site-packages/quast_libs/site_packages/jsontemplate/jsontemplate.py | \
+sed 's/import cgi/import html/g' | sed 's/cgi\.escape/html\.escape/g' > temp &&\
+mv temp /root/miniconda/lib/python3.8/site-packages/quast_libs/site_packages/jsontemplate/jsontemplate.py && \
 ln -s /root/miniconda/bin/quast.py /root/miniconda/bin/quast 
 
 # --- install checkM
@@ -152,8 +156,13 @@ RUN cd root && \
 bash git/WGA-LP/other_scripts/install_merqury.sh &&\
 rm *.tar.* 
 
+# --- install SPAdes
+RUN cd /root &&\
+wget http://cab.spbu.ru/files/release3.15.2/SPAdes-3.15.2-Linux.tar.gz &&\
+tar -xzf SPAdes-3.15.2-Linux.tar.gz 
+
 # --- configure WGA-LP
-RUN cd root && \
+RUN cd root && eval "$(/root/miniconda/bin/conda shell.bash hook)" &&\
 cd git/WGA-LP && \
 # inside git/WGA-LP
 # configure bazam and mauve
@@ -170,6 +179,9 @@ pip3 install . &&\
 chmod 775 /root/git/WGA-LP/wgalp.py &&\
 ln -s /root/git/WGA-LP/wgalp.py /usr/local/bin/wgalp 
 
+# --- install PRODIGAL for chekcM
+RUN cd root && eval "$(/root/miniconda/bin/conda shell.bash hook)" &&\
+conda install -y -c bioconda prodigal
 
 # --- donwload and setup kraken_db
 # if you want to download the mini-kraken package directly uncomment the following:
@@ -187,8 +199,8 @@ COPY docker_bashrc.sh /root/.bashrc
 VOLUME /root/shared
 
 # docker commands:
-# docker build -t wgalp:0.99 .
-# docker run --name wgalp -v /your/path/to/data:/root/shared -itd wgalp:0.99
+# docker build -t wgalp:1.00 .
+# docker run --name wgalp -v /your/path/to/data:/root/shared --privileged -itd wgalp:1.00
 # docker exec -it wgalp /bin/bash
 
 
