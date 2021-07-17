@@ -16,6 +16,8 @@ ENV PATH=$PATH:/root/git/prokka/bin
 ENV PATH=$PATH:/root/SPAdes-3.15.2-Linux/bin/
 # krakendb
 ENV kraken_db=/root/kraken_db
+# minia
+ENV PATH=$PATH:/root/minia-v3.2.6-bin-Linux/bin/
 
 # --- early preparation
 RUN cd root &&\
@@ -197,6 +199,13 @@ COPY kraken_db /root/kraken_db
 COPY docker_bashrc.sh /root/.bashrc
 
 VOLUME /root/shared
+
+# --- install Minia
+RUN cd /root/ && eval "$(/root/miniconda/bin/conda shell.bash hook)" && \
+wget https://github.com/GATB/minia/releases/download/v3.2.6/minia-v3.2.6-bin-Linux.tar.gz && \
+tar -xvf minia-v3.2.6-bin-Linux.tar.gz && \
+rm minia-v3.2.6-bin-Linux.tar.gz
+
 
 # docker commands:
 # docker build -t wgalp:1.00 .
