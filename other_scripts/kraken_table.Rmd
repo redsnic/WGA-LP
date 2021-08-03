@@ -1,0 +1,73 @@
+---
+title: "Untitled"
+author: "Nicolò Rossi"
+date: "1/8/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+```
+
+## struff
+
+
+```{r}
+tab <- read_tsv("/home/redsnic/Scaricati/Telegram Desktop/Campione_V6_4_2", col_names = c("precentage", "reads", "reads_at_level", "level", "ID", "name"))
+```
+
+```{r}
+tab <- tab %>% 
+  mutate(level = map_chr(level, ~strsplit(., "")[[1]][1])) %>% 
+  select(name, ID, level, precentage) %>%
+  mutate(sample = "test")
+```
+
+```{r}
+tab
+```
+
+
+```{r}
+tab %>% 
+  bind_rows(tab %>% mutate(sample="second")) %>% 
+  pivot_wider(names_from = "sample", values_from="precentage")
+```
+
+```{r}
+
+```
+
+
+
+```{r}
+taxa.lvls <- c("U","R","D", "K", "P", "C", "O", "F", "G", "S")
+```
+
+
+```{r}
+tab 
+```
+
+
+
+```{r}
+out <- list()
+for(l in taxa.lvls){
+  t <- tab %>% filter(level == !!l)
+  if(nrow(t) == 0){
+    out[[l]] <- NULL
+  }else{
+    out[[l]] <- t %>% select(name, precentage)
+  }
+}
+```
+
+
+
+
+
+```{r}
+out
+```
+
