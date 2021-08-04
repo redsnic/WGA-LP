@@ -11,7 +11,7 @@ WGA-LP was built to operate directly from raw `.fastq` files
 and was originally used to analyze the genome 
 of a set Lactobacilli (hence the L in the acronym)
 
-More informations on the pipeline are available on the [WGA-LP preprint](https://www.biorxiv.org/content/10.1101/2021.07.31.454518v1) that includes a more detailed guide in its [supplementary materials](https://www.biorxiv.org/content/biorxiv/early/2021/08/03/2021.07.31.454518/DC1/embed/media-1.pdf?download=true). In such guide it is shown how to decontaminate and assemble the reads included in the BioProject [PRJNA749304](https://www.ncbi.nlm.nih.gov/bioproject/?term=prjna749304).
+More information on the pipeline are available on the [WGA-LP preprint](https://www.biorxiv.org/content/10.1101/2021.07.31.454518v1) that includes a more detailed guide in its [supplementary materials](https://www.biorxiv.org/content/biorxiv/early/2021/08/03/2021.07.31.454518/DC1/embed/media-1.pdf?download=true). In such guide it is shown how to decontaminate and assemble the reads included in the BioProject [PRJNA749304](https://www.ncbi.nlm.nih.gov/bioproject/?term=prjna749304).
 
 ## Installation
 
