@@ -13,8 +13,8 @@ from WGALP.blocks.prokka import prokka
 
 def prepare_input(args):
     input_data = InputManager("Wrapper to easily run prokka in NCBI compliant mode")
-    input_data.add_arg("--contigs", "path", description="assembled contigs or scaffolds (.fasta)")
-    input_data.add_arg("--output", "dir", description="path to the output folder") 
+    input_data.add_arg("--contigs", "path", description="[Required] assembled contigs or scaffolds (.fasta)")
+    input_data.add_arg("--output", "dir", description="[Required] path to the output folder") 
     input_data.parse(args)
     return input_data
 

@@ -18,8 +18,8 @@ def prepare_input(args):
     input_data.add_arg("--fastq-fwd", "path", description="raw forward reads (.fastq)")
     input_data.add_arg("--fastq-rev", "path", description="raw reverse reads (.fastq)")
     input_data.add_arg("--fasta", "path", description="altenatively, you can input a .fasta file")
-    input_data.add_arg("--output", "dir", description="path to the output folder")
-    input_data.add_arg("--kraken-db", "path", description="path to the (mini)kraken database")
+    input_data.add_arg("--output", "dir", description="[Required] path to the output folder")
+    input_data.add_arg("--kraken-db", "path", description="[Required] path to the (mini)kraken database")
     input_data.add_arg("--memory-mapped", "flag", description="add this flag if you don't want to load the (mini)kraken db in RAM (so, when using a ramdisk)")
     input_data.parse(args)
     return input_data

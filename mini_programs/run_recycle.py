@@ -13,12 +13,12 @@ from sub_workflows.extract_plasmids import Recycler
 
 def prepare_input(args):
     input_data = InputManager("Wrapper to easily run recycler and inferr plasmids from genome assembly graphs")
-    input_data.add_arg("--fastq-fwd", "path", description="raw forward reads (.fastq)")
-    input_data.add_arg("--fastq-rev", "path", description="raw reverse reads (.fastq)") 
-    input_data.add_arg("--contigs", "path", description="assembled contigs (.fasta)") 
-    input_data.add_arg("--assembly-graph", "path", description="assembly graph (.fastg)")
-    input_data.add_arg("--kmer", "text", description="maximum kmer length used by the assembler (127 for spades)")
-    input_data.add_arg("--output", "dir", description="output folder")
+    input_data.add_arg("--fastq-fwd", "path", description="[Required] raw forward reads (.fastq)")
+    input_data.add_arg("--fastq-rev", "path", description="[Required] raw reverse reads (.fastq)") 
+    input_data.add_arg("--contigs", "path", description="[Required] assembled contigs (.fasta)") 
+    input_data.add_arg("--assembly-graph", "path", description="[Required] assembly graph (.fastg)")
+    input_data.add_arg("--kmer", "text", description="[Required] maximum kmer length used by the assembler (127 for spades)")
+    input_data.add_arg("--output", "dir", description="[Required] output folder")
     input_data.parse(args)
     return input_data
 

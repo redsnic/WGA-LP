@@ -11,7 +11,7 @@ from WGALP.utils.input_manager import check_folders
 
 def prepare_input(args):
     input_data = InputManager(program_description="Unload kraken-db from RAM\nThis command requires root privileges.")
-    input_data.add_arg("--mount-point", "path", description="path where the kraken_db was mounted")
+    input_data.add_arg("--mount-point", "path", description="[Required] path where the kraken_db was mounted")
     input_data.parse(args)
     return input_data
 

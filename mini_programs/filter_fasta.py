@@ -13,10 +13,10 @@ from WGALP.utils.genericUtils import binary_search
 
 def prepare_input(args):
     input_data = InputManager("Select nodes by ID from a Whole Genom Assembly")
-    input_data.add_arg("--contigs", "path", description="assembled contigs or scaffolds (.fasta)")
-    input_data.add_arg("--selected-contigs", "path", description="a file containing the ids of the selected contigs (each id is in its own line)")
+    input_data.add_arg("--contigs", "path", description="[Required] assembled contigs or scaffolds (.fasta)")
+    input_data.add_arg("--selected-contigs", "path", description="[Required] a file containing the ids of the selected contigs (each id is in its own line)")
     input_data.add_arg("--complement", "flag", description="if set, keeps contigs not in list") 
-    input_data.add_arg("--output", "dir", description="path to the output folder") 
+    input_data.add_arg("--output", "dir", description="[Required] path to the output folder") 
     input_data.parse(args)
     return input_data
 

@@ -14,10 +14,10 @@ from WGALP.blocks.SPAdes import SPAdes
 
 def prepare_input(args):
     input_data = InputManager("Wrapper to easily run Whole Genome Assemblers")
-    input_data.add_arg("--fastq-fwd", "path", description="preprocessed forward reads (.fastq)")
-    input_data.add_arg("--fastq-rev", "path", description="preprocessed reverse reads (.fastq)")
-    input_data.add_arg("--output", "dir", description="path to the output folder")
-    input_data.add_arg("--assembler", "text", description="assembler name (from this list) [SPAdes, minia, SPAdes_plasmid]")
+    input_data.add_arg("--fastq-fwd", "path", description="[Required] preprocessed forward reads (.fastq)")
+    input_data.add_arg("--fastq-rev", "path", description="[Required] preprocessed reverse reads (.fastq)")
+    input_data.add_arg("--output", "dir", description="[Required] path to the output folder")
+    input_data.add_arg("--assembler", "text", description="[Required] assembler name (from this list) [SPAdes, minia, SPAdes_plasmid]")
     input_data.add_arg("--kmer", "text", description="kmer length (to be used only with minia)")
     input_data.parse(args)
     return input_data

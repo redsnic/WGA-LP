@@ -16,9 +16,9 @@ def prepare_input(args):
     input_data.add_arg("--fastq", "path", description="single raw read file to be cleaned (.fastq) [use only with NON paired end data]")
     input_data.add_arg("--fastq-fwd", "path", description="forward raw reads (.fastq) [use only with paired end data]")
     input_data.add_arg("--fastq-rev", "path", description="revese raw reads (.fastq) [use only with paired end data]")
-    input_data.add_arg("--references", "list", description="list of the possible references for the sequenced genome (.fasta, BWA indexed)")
-    input_data.add_arg("--contaminants", "list", description="list of the contaminant")
-    input_data.add_arg("--output", "dir", description="the folder in which the output will be saved")
+    input_data.add_arg("--references", "list", description="[Required] list of the possible references for the sequenced genome (.fasta, BWA indexed)")
+    input_data.add_arg("--contaminants", "list", description="[Required] list of the contaminant")
+    input_data.add_arg("--output", "dir", description="[Required] the folder in which the output will be saved")
     input_data.parse(args)
     return input_data
 

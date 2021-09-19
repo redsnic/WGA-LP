@@ -13,9 +13,9 @@ from WGALP.blocks.mauve import mauve_contig_sorting
 
 def prepare_input(args):
     input_data = InputManager("Reorder contigs using mauve and a reference genome")
-    input_data.add_arg("--contigs", "path", description="assembled contigs or scaffolds (.fasta)")
-    input_data.add_arg("--reference", "path", description="a reference for the genome (.fasta)")
-    input_data.add_arg("--output", "dir", description="path to the output folder") 
+    input_data.add_arg("--contigs", "path", description="[Required] assembled contigs or scaffolds (.fasta)")
+    input_data.add_arg("--reference", "path", description="[Required] a reference for the genome (.fasta)")
+    input_data.add_arg("--output", "dir", description="[Required] path to the output folder") 
     input_data.parse(args)
     return input_data
 

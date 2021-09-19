@@ -15,10 +15,10 @@ from WGALP.blocks.bracken import bracken
 
 def prepare_input(args):
     input_data = InputManager("Run quality evaluation of raw reads, prepare trimmed reads and assess contaminations")
-    input_data.add_arg("--fastq-fwd", "path", description="raw forward reads (.fastq)")
-    input_data.add_arg("--fastq-rev", "path", description="raw reverse reads (.fastq)")
-    input_data.add_arg("--output", "dir", description="path to the output folder")
-    input_data.add_arg("--kraken-db", "path", description="path to the (mini)kraken database")
+    input_data.add_arg("--fastq-fwd", "path", description="[Required] raw forward reads (.fastq)")
+    input_data.add_arg("--fastq-rev", "path", description="[Required] raw reverse reads (.fastq)")
+    input_data.add_arg("--output", "dir", description="[Required] path to the output folder")
+    input_data.add_arg("--kraken-db", "path", description="[Required] path to the (mini)kraken database")
     input_data.add_arg("--memory-mapped", "flag", description="add this flag if you don't want to load the (mini)kraken db in RAM (so, when using a ramdisk)")
     input_data.add_arg("--just-kraken", "flag", description="add this flag if you just want to run kraken/bracken (if you have, decontamined reads for example)")
     input_data.add_arg("--trimmomatic-args", "text", description="override default trimmomatic settings, write this field as a single string\n\t\tcare that this code will be interpreted direcly by the bash shell, adding ;, |, &&, etc.. may break the execution\n\t\tby default we use: SLIDINGWINDOW:5:20 ILLUMINACLIP:TruSeq2-PE.fa:2:30:10")

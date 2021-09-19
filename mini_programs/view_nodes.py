@@ -13,10 +13,10 @@ from WGALP.blocks.r_node_analysis import view
 
 def prepare_input(args):
     input_data = InputManager("Program to compute coverage plots for specific nodes from a samtools depth file")
-    input_data.add_arg("--depth", "path", description="a .depth file from samtools depth")
+    input_data.add_arg("--depth", "path", description="[Required] a .depth file from samtools depth")
     input_data.add_arg("--nodes", "list", description="list of node IDs to be considered (node IDs are the same of the original fasta file of the assembly)")
     input_data.add_arg("--all", "flag", description="plot coverage for every node, overrides --nodes")
-    input_data.add_arg("--output", "dir", description="output folder")
+    input_data.add_arg("--output", "dir", description="[Required] output folder")
     input_data.parse(args)
     return input_data
 

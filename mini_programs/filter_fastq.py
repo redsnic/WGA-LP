@@ -16,9 +16,9 @@ def prepare_input(args):
     input_data.add_arg("--fastq", "path", description="fastq reads to be filtered (.fastq)")
     input_data.add_arg("--fastq-fwd", "path", description="fastq reads to be filtered FWD (Paired end mode) (.fastq)")
     input_data.add_arg("--fastq-rev", "path", description="fastq reads to be filtered REV (Paired end mode) (.fastq)")
-    input_data.add_arg("--selected-reads", "path", description="a file containing the ids of the selected reads (each id is in its own line)")
+    input_data.add_arg("--selected-reads", "path", description="[Required] a file containing the ids of the selected reads (each id is in its own line)")
     input_data.add_arg("--complement", "flag", description="if set, selected reads are instead removed from the original fastq")
-    input_data.add_arg("--output", "dir", description="path to the output folder") 
+    input_data.add_arg("--output", "dir", description="[Required] path to the output folder") 
     input_data.parse(args)
     return input_data
 

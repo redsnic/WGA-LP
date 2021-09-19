@@ -13,10 +13,10 @@ from sub_workflows.compute_coverage import ComputeCoverage
 
 def prepare_input(args):
     input_data = InputManager("Program to extract coverage statistics from a Whole Genome Assembly")
-    input_data.add_arg("--fastq-fwd", "path", description="raw forward reads (.fastq)")
-    input_data.add_arg("--fastq-rev", "path", description="raw reverse reads (.fastq)") 
-    input_data.add_arg("--contigs", "path", description="assembled contigs (.fasta)") 
-    input_data.add_arg("--output", "dir", description="output folder")
+    input_data.add_arg("--fastq-fwd", "path", description="[Required] raw forward reads (.fastq)")
+    input_data.add_arg("--fastq-rev", "path", description="[Required] raw reverse reads (.fastq)") 
+    input_data.add_arg("--contigs", "path", description="[Required] assembled contigs (.fasta)") 
+    input_data.add_arg("--output", "dir", description="[Required] output folder")
     input_data.parse(args)
     return input_data
 
