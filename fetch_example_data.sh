@@ -26,7 +26,7 @@ mkdir /root/shared/references/pediococcus
 mkdir /root/shared/simulation_references
 # --- move data ---
 mv /root/example_data/144_raw_reads/* /root/shared/144/
-mv /root/example_data/LRhamnosus_example_references/* root/shared/references/rhamnosus/
+mv /root/example_data/LRhamnosus_example_references/* /root/shared/references/rhamnosus/
 mv /root/example_data/PAcidilactici_example_references/* /root/shared/references/pediococcus/
 mv /root/example_data/simulation_references/* /root/shared/simulation_references/
 
