@@ -64,7 +64,7 @@ def decontamination(rootpath, references, contaminants, fastq):
         os.rename(filter_bad_reads["filtered_fastq"], os.path.join(rootpath, "discarded_reads.fastq"))
         # cleanup
         remap_to_reference.delete()
-        extract_good_reads.delete()
+        extract_good_reads.delete() 
         filter_bad_reads.delete()
         # update
         pb_fastq = os.path.join(rootpath, os.path.basename(fastq))
@@ -73,7 +73,7 @@ def decontamination(rootpath, references, contaminants, fastq):
     out_fastq = os.path.join(rootpath, "decontaminated.fastq")
     read_set_bad = os.path.join(rootpath, "bad.txt")
     make_read_set([pb_fastq], read_set_bad)
-    filter_fastq_reads(fastq, read_set_bad, out_fastq)
+    filter_fastq_reads(fastq, read_set_bad, out_fastq, keep=False)
     # further cleanup
     os.remove(os.path.join(rootpath, "possibly_bad.fastq"))
     os.remove(os.path.join(rootpath, "bad.txt"))

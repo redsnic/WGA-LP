@@ -28,6 +28,7 @@ def prokka(name, rootpath, assembled_seqence, execution_mode="on_demand"):
     step.set_description(description, input_description, output_description)
     return step
 
+### Runner
 def prokka_runner(step, args):
     """
     run Prokka annotation

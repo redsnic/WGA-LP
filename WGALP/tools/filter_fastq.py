@@ -35,6 +35,12 @@ def filter_fastq_reads( fastq_file_path, selected_reads, out_file_name, keep=Fal
 
     # read bad_reads and sort them
     bad_reads = bad_reads_file.read().split()
+    
+    # remove ending /{1,2}
+    for i in range(len(bad_reads)):
+        if bad_reads[i][len(bad_reads[i])-2] == "/":
+            bad_reads[i] = bad_reads[i][:len(bad_reads[i])-2]
+
     bad_reads.sort()
 
     out_file = open(out_file_name, "w")
@@ -44,7 +50,12 @@ def filter_fastq_reads( fastq_file_path, selected_reads, out_file_name, keep=Fal
     for line in fastq_file:
         if(line_count == 0):
             # check if read ID is in the bad list
-            read_id = line.split()[0][1:]
+            read_id = line.split()[0][1:].replace("/?","")
+            
+            # manage paired end id if necessary
+            if read_id[len(read_id)-2] == "/":
+                read_id = read_id[:len(read_id)-2]
+
             if binary_search(bad_reads, read_id) is not None:
                 to_be_printed = keep
             else:
