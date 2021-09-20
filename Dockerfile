@@ -208,8 +208,8 @@ rm minia-v3.2.6-bin-Linux.tar.gz
 
 
 # docker commands:
-# docker build -t wgalp:1.00 .
-# docker run --name wgalp -v /your/path/to/data:/root/shared --privileged -itd wgalp:1.00
+# docker build -t wgalp:1.01 .
+# docker run --name wgalp -v /your/path/to/data:/root/shared --privileged -itd wgalp:1.01
 # docker exec -it wgalp /bin/bash
 
 
