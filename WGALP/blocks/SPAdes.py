@@ -16,13 +16,14 @@ The contigs and scaffolds of the assembled genome
 """
 
 ### Wrapper
-def SPAdes(name, rootpath, fastq_fwd, fastq_rev, plasmid = False, execution_mode = "on_demand"):
+def SPAdes(name, rootpath, fastq_fwd, fastq_rev, plasmid = False, execution_mode = "on_demand", only_assembler = False):
     step = Step(name, rootpath, execution_mode=execution_mode)
     step.set_command(SPAdes_runner)
     step_args = {
         "fastq_fwd" : fastq_fwd,
         "fastq_rev" : fastq_rev,
-        "plasmid" : plasmid
+        "plasmid" : plasmid,
+        "only-assembler" : only_assembler
     }
     step.run(step_args)
     step.set_description(description, input_description, output_description)
@@ -37,7 +38,8 @@ def SPAdes_runner(step, args):
     input:
         fastq_fwd : path 
         fastq_rev : path (fastq_fwd and fastq_rev must have different filenames ...)
-        plasmid : flag (run plasmid extraction)   
+        plasmid : flag (run plasmid extraction) 
+        only-assembler : avoid using read error correction (useful with low quality reads)  
     output:
         contigs : SPAdes generated contigs
         scaffolds : SPAdes generated scaffolds (links contigs using paired end reads)
@@ -45,8 +47,13 @@ def SPAdes_runner(step, args):
     """
     f1 = args["fastq_fwd"]
     f2 = args["fastq_rev"]
+    only_assembler = args["only-assembler"]
 
     command = "spades.py -1 " + f1 + " -2 " + f2 + " -o " + step.outpath 
+
+    if only_assembler:
+        command += " --only-assembler"
+    
     
     if args["plasmid"]:
         command += " --plasmid"

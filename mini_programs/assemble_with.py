@@ -19,6 +19,7 @@ def prepare_input(args):
     input_data.add_arg("--output", "dir", description="[Required] path to the output folder")
     input_data.add_arg("--assembler", "text", description="[Required] assembler name (from this list) [SPAdes, minia, SPAdes_plasmid]")
     input_data.add_arg("--kmer", "text", description="kmer length (to be used only with minia)")
+    input_data.add_arg("--only-assembler", "flag", description="avoid using read error correction (SPAdes setting, useful with low quality reads)")
     input_data.parse(args)
     return input_data
 
@@ -47,7 +48,7 @@ def sanity_check(fastq_fwd, fastq_rev, output_dir, assembler, kmer):
 
 # --- core function
 
-def run_assembler(fastq_fwd, fastq_rev, output_dir, assembler, kmer):
+def run_assembler(fastq_fwd, fastq_rev, output_dir, assembler, kmer, only_assembler):
     """
     Run an assembler on a paired end fastq pair. 
     :param fastq_fwd: preprocessed forward reads (.fastq)
@@ -55,15 +56,16 @@ def run_assembler(fastq_fwd, fastq_rev, output_dir, assembler, kmer):
     :param output_dir: path to the output folder
     :param assembler: assembler name (from this list) [SPAdes, minia, SPAdes_plasmid]
     :param kmer: kmer length (to be used only with minia)
+    :param only-assembler: avoid error correction (to be used only with SPAdes)
     """
     # sanity check
     sanity_check(fastq_fwd, fastq_rev, output_dir, assembler, kmer)
     
     if assembler == "SPAdes":
-        out = SPAdes("SPAdes", output_dir, fastq_fwd, fastq_rev)
+        out = SPAdes("SPAdes", output_dir, fastq_fwd, fastq_rev, only_assembler=only_assembler)
         return out
     elif assembler == "SPAdes_plasmid":
-        out = SPAdes("SPAdes", output_dir, fastq_fwd, fastq_rev, plasmid=True)
+        out = SPAdes("SPAdes", output_dir, fastq_fwd, fastq_rev, plasmid=True, only_assembler=only_assembler)
         return out
     elif assembler=="minia":
         out = minia("minia_" + str(kmer), output_dir, kmer, fastq_fwd, fastq_rev=fastq_rev) 
@@ -84,8 +86,9 @@ def assemble_with(args):
         kmer = int(in_manager["--kmer"]["value"])
     except Exception:
         kmer = None
+    only_assembler = in_manager["--only-assembler"]["value"]
     
-    output = run_assembler(fastq_fwd, fastq_rev, output_dir, assembler, kmer)
+    output = run_assembler(fastq_fwd, fastq_rev, output_dir, assembler, kmer, only_assembler)
 
     print("task completed successfully")
     print("assembled contigs/scaffolds are at the following locations:")
